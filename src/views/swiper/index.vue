@@ -3,12 +3,14 @@ import { reactive, ref } from "vue";
 import { Search, Refresh, Plus, View } from "@element-plus/icons-vue";
 import reviewDialog from "./reviewDialog.vue";
 import editDialog from "./editDialog.vue";
+import { ElMessageBox } from "element-plus";
+import { message } from "@/utils/message";
 
 defineOptions({
   name: "SwiperIndex"
 });
 
-const tableData = [
+const tableData = ref([
   {
     id: 1,
     name: "1.png",
@@ -65,7 +67,7 @@ const tableData = [
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
   }
-];
+]);
 
 const formInline = reactive({
   user: "",
@@ -79,7 +81,7 @@ const onSubmit = () => {
 
 const reviewDialogRef = ref(null);
 const handleReviewSlides = () => {
-  const pics: string[] = tableData.filter(item => item.status === 1).map(item => item.link);
+  const pics: string[] = tableData.value.filter(item => item.status === 1).map(item => item.link);
   reviewDialogRef.value.open(pics);
 };
 
@@ -90,6 +92,20 @@ const handleAddAndUpdate = (type: string, id?: number) => {
   } else if (type === "update") {
     editDialogRef.value.open(type, id);
   }
+};
+
+const handleDelete = (id: number) => {
+  ElMessageBox.confirm("删除操作不可逆，确认删除？", "注意", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).then(() => {
+    tableData.value.splice(
+      tableData.value.findIndex(item => item.id === id),
+      1
+    );
+    message("登录成功", { type: "success" });
+  });
 };
 </script>
 
@@ -145,8 +161,8 @@ const handleAddAndUpdate = (type: string, id?: number) => {
         </el-table-column>
         <el-table-column prop="status" label="上下架状态" align="center" width="180px">
           <template #default="{ row }">
-            <el-tag v-show="row.status === 1" type="success">已上架</el-tag>
-            <el-tag v-show="row.status === 2" type="info">已下架</el-tag>
+            <el-tag v-if="row.status === 1" type="success">已上架</el-tag>
+            <el-tag v-if="row.status === 2" type="info">已下架</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="上传时间" align="center" width="180px" />
@@ -156,7 +172,7 @@ const handleAddAndUpdate = (type: string, id?: number) => {
             <el-button link type="primary" :data-name="row.name" @click="handleAddAndUpdate('update', row.id)"
               >编辑</el-button
             >
-            <el-button link type="danger" :data-name="row.name">删除</el-button>
+            <el-button link type="danger" :data-name="row.name" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
