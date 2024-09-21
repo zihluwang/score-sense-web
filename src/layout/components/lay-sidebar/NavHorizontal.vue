@@ -15,26 +15,12 @@ import Setting from "@iconify-icons/ri/settings-3-line";
 
 const menuRef = ref();
 const showLogo = ref(
-  storageLocal().getItem<StorageConfigs>(
-    `${responsiveStorageNameSpace()}configure`
-  )?.showLogo ?? true
+  storageLocal().getItem<StorageConfigs>(`${responsiveStorageNameSpace()}configure`)?.showLogo ?? true
 );
 
-const {
-  route,
-  title,
-  logout,
-  onPanel,
-  getLogo,
-  username,
-  userAvatar,
-  backTopMenu,
-  avatarsStyle
-} = useNav();
+const { route, title, logout, onPanel, getLogo, username, userAvatar, backTopMenu, avatarsStyle } = useNav();
 
-const defaultActive = computed(() =>
-  !isAllEmpty(route.meta?.activePath) ? route.meta.activePath : route.path
-);
+const defaultActive = computed(() => (!isAllEmpty(route.meta?.activePath) ? route.meta.activePath : route.path));
 
 nextTick(() => {
   menuRef.value?.handleResize();
@@ -48,10 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    v-loading="usePermissionStoreHook().wholeMenus.length === 0"
-    class="horizontal-header"
-  >
+  <div v-loading="usePermissionStoreHook().wholeMenus.length === 0" class="horizontal-header">
     <div v-if="showLogo" class="horizontal-header-left" @click="backTopMenu">
       <img :src="getLogo()" alt="logo" />
       <span>{{ title }}</span>
@@ -86,20 +69,13 @@ onMounted(() => {
         <template #dropdown>
           <el-dropdown-menu class="logout">
             <el-dropdown-item @click="logout">
-              <IconifyIconOffline
-                :icon="LogoutCircleRLine"
-                style="margin: 5px"
-              />
+              <IconifyIconOffline :icon="LogoutCircleRLine" style="margin: 5px" />
               退出系统
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span
-        class="set-icon navbar-bg-hover"
-        title="打开系统配置"
-        @click="onPanel"
-      >
+      <span class="set-icon navbar-bg-hover" title="打开系统配置" @click="onPanel">
         <IconifyIconOffline :icon="Setting" />
       </span>
     </div>

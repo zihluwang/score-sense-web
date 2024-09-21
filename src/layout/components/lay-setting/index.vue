@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import {
-  ref,
-  unref,
-  watch,
-  reactive,
-  computed,
-  nextTick,
-  onUnmounted,
-  onBeforeMount
-} from "vue";
+import { ref, unref, watch, reactive, computed, nextTick, onUnmounted, onBeforeMount } from "vue";
 import { emitter } from "@/utils/mitt";
 import LayPanel from "../lay-panel/index.vue";
 import { useNav } from "@/layout/hooks/useNav";
@@ -34,15 +25,8 @@ const mixRef = ref();
 const verticalRef = ref();
 const horizontalRef = ref();
 
-const {
-  dataTheme,
-  overallStyle,
-  layoutTheme,
-  themeColors,
-  toggleClass,
-  dataThemeChange,
-  setLayoutThemeColor
-} = useDataThemeChange();
+const { dataTheme, overallStyle, layoutTheme, themeColors, toggleClass, dataThemeChange, setLayoutThemeColor } =
+  useDataThemeChange();
 
 /* body添加layout属性，作用于src/style/sidebar.scss */
 if (unref(layoutTheme)) {
@@ -132,9 +116,7 @@ function onChange({ option }) {
 
 /** 侧边栏Logo */
 function logoChange() {
-  unref(logoVal)
-    ? storageConfigureChange("showLogo", true)
-    : storageConfigureChange("showLogo", false);
+  unref(logoVal) ? storageConfigureChange("showLogo", true) : storageConfigureChange("showLogo", false);
   emitter.emit("logoChange", unref(logoVal));
 }
 
@@ -173,15 +155,9 @@ const stretchTypeChange = ({ option }) => {
 /** 主题色 激活选择项 */
 const getThemeColor = computed(() => {
   return current => {
-    if (
-      current === layoutTheme.value.theme &&
-      layoutTheme.value.theme !== "light"
-    ) {
+    if (current === layoutTheme.value.theme && layoutTheme.value.theme !== "light") {
       return "#fff";
-    } else if (
-      current === layoutTheme.value.theme &&
-      layoutTheme.value.theme === "light"
-    ) {
+    } else if (current === layoutTheme.value.theme && layoutTheme.value.theme === "light") {
       return "#1d2b45";
     } else {
       return "transparent";
@@ -303,10 +279,8 @@ onBeforeMount(() => {
   /* 初始化系统配置 */
   nextTick(() => {
     watchSystemThemeChange();
-    settings.greyVal &&
-      document.querySelector("html")?.classList.add("html-grey");
-    settings.weakVal &&
-      document.querySelector("html")?.classList.add("html-weakness");
+    settings.greyVal && document.querySelector("html")?.classList.add("html-grey");
+    settings.weakVal && document.querySelector("html")?.classList.add("html-weakness");
     settings.tabsVal && tagsChange();
     settings.hideFooter && hideFooterChange();
   });
@@ -326,9 +300,7 @@ onUnmounted(() => removeMatchMedia);
         :options="themeOptions"
         @change="
           theme => {
-            theme.index === 1 && theme.index !== 2
-              ? (dataTheme = true)
-              : (dataTheme = false);
+            theme.index === 1 && theme.index !== 2 ? (dataTheme = true) : (dataTheme = false);
             overallStyle = theme.option.theme;
             dataThemeChange(theme.option.theme);
             theme.index === 2 && watchSystemThemeChange();
@@ -345,11 +317,7 @@ onUnmounted(() => removeMatchMedia);
           :style="getThemeColorStyle(item.color)"
           @click="setLayoutThemeColor(item.themeColor)"
         >
-          <el-icon
-            style="margin: 0.1em 0.1em 0 0"
-            :size="17"
-            :color="getThemeColor(item.themeColor)"
-          >
+          <el-icon style="margin: 0.1em 0.1em 0 0" :size="17" :color="getThemeColor(item.themeColor)">
             <IconifyIconOffline :icon="Check" />
           </el-icon>
         </li>
@@ -425,18 +393,9 @@ onUnmounted(() => removeMatchMedia);
             :class="[settings.stretch ? 'w-[24%]' : 'w-[50%]']"
             style="color: var(--el-color-primary)"
           >
-            <IconifyIconOffline
-              :icon="settings.stretch ? RightArrow : LeftArrow"
-              height="20"
-            />
-            <div
-              class="flex-grow border-b border-dashed"
-              style="border-color: var(--el-color-primary)"
-            />
-            <IconifyIconOffline
-              :icon="settings.stretch ? LeftArrow : RightArrow"
-              height="20"
-            />
+            <IconifyIconOffline :icon="settings.stretch ? RightArrow : LeftArrow" height="20" />
+            <div class="flex-grow border-b border-dashed" style="border-color: var(--el-color-primary)" />
+            <IconifyIconOffline :icon="settings.stretch ? LeftArrow : RightArrow" height="20" />
           </div>
         </button>
       </span>

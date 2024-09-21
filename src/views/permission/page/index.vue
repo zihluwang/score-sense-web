@@ -54,12 +54,7 @@ function onChange() {
         </div>
       </template>
       <el-select v-model="username" class="!w-[160px]" @change="onChange">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
     </el-card>
   </div>

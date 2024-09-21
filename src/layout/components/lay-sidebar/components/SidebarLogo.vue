@@ -22,13 +22,7 @@ const { title, getLogo } = useNav();
         <img :src="getLogo()" alt="logo" />
         <span class="sidebar-title">{{ title }}</span>
       </router-link>
-      <router-link
-        v-else
-        key="expand"
-        :title="title"
-        class="sidebar-logo-link"
-        :to="getTopMenu()?.path ?? '/'"
-      >
+      <router-link v-else key="expand" :title="title" class="sidebar-logo-link" :to="getTopMenu()?.path ?? '/'">
         <img :src="getLogo()" alt="logo" />
         <span class="sidebar-title">{{ title }}</span>
       </router-link>
