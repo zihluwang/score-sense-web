@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { Search, Refresh, Plus, View } from "@element-plus/icons-vue";
+import ReviewDialog from "./reviewDialog.vue";
 
 defineOptions({
   name: "SwiperIndex"
@@ -67,6 +68,12 @@ const formInline = reactive({
 const onSubmit = () => {
   console.log("submit!");
 };
+
+const reviewDialogRef = ref(null);
+const handleReviewSlides = () => {
+  const pics: string[] = tableData.filter(item => item.status === 1).map(item => item.link);
+  reviewDialogRef.value.open(pics);
+};
 </script>
 
 <template>
@@ -96,7 +103,7 @@ const onSubmit = () => {
     <el-card shadow="never">
       <div class="mb-[12px]">
         <el-button type="primary" :icon="Plus">新增轮播图</el-button>
-        <el-button :icon="View">效果预览</el-button>
+        <el-button :icon="View" @click="handleReviewSlides">效果预览</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column label="序号" align="center" width="100px">
@@ -134,6 +141,8 @@ const onSubmit = () => {
         :total="1000"
       />
     </el-card>
+
+    <ReviewDialog ref="reviewDialogRef" />
   </div>
 </template>
 
