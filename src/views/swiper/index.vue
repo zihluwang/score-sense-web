@@ -90,8 +90,16 @@ const handleReviewSlides = () => {
             <el-option label="下架" :value="2" />
           </el-select>
         </el-form-item>
-        <el-form-item label="上架时间">
-          <el-date-picker v-model="formInline.date" type="date" placeholder="Pick a date" clearable />
+        <el-form-item label="上传时间">
+          <el-date-picker
+            v-model="formInline.date"
+            type="datetimerange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="YYYY-MM-DD HH:mm:ss"
+            date-format="YYYY/MM/DD"
+            time-format="HH:mm:ss"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="onSubmit">搜索</el-button>
@@ -113,19 +121,19 @@ const handleReviewSlides = () => {
         </el-table-column>
         <el-table-column prop="name" label="图片名称" align="center" />
         <el-table-column prop="link" label="图片链接" align="center" />
-        <el-table-column label="图片" align="center">
+        <el-table-column label="图片" align="center" width="120px">
           <template #default="{ row }">
             <el-image style="width: 100px; height: 100px" :src="row.link" fit="cover" />
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="上下架状态" align="center">
+        <el-table-column prop="status" label="上下架状态" align="center" width="180px">
           <template #default="{ row }">
             <el-tag v-show="row.status === 1" type="success">已上架</el-tag>
             <el-tag v-show="row.status === 2" type="info">已下架</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="上传时间" align="center" />
-        <el-table-column prop="updateTime" label="最近更新时间" align="center" />
+        <el-table-column prop="createTime" label="上传时间" align="center" width="180px" />
+        <el-table-column prop="updateTime" label="最近更新时间" align="center" width="180px" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" :data-name="row.name">编辑</el-button>
