@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { Search, Refresh, Plus, View } from "@element-plus/icons-vue";
-import ReviewDialog from "./reviewDialog.vue";
+import reviewDialog from "./reviewDialog.vue";
+import editDialog from "./editDialog.vue";
 
 defineOptions({
   name: "SwiperIndex"
@@ -9,6 +10,7 @@ defineOptions({
 
 const tableData = [
   {
+    id: 1,
     name: "1.png",
     link: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
     status: 1,
@@ -16,6 +18,7 @@ const tableData = [
     updateTime: "2024-09-23 00:00:00"
   },
   {
+    id: 2,
     name: "2.png",
     link: "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg",
     status: 2,
@@ -23,6 +26,7 @@ const tableData = [
     updateTime: "2024-09-23 00:00:00"
   },
   {
+    id: 3,
     name: "3.png",
     link: "https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg",
     status: 2,
@@ -30,6 +34,7 @@ const tableData = [
     updateTime: "2024-09-23 00:00:00"
   },
   {
+    id: 4,
     name: "4.png",
     link: "https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg",
     status: 2,
@@ -37,6 +42,7 @@ const tableData = [
     updateTime: "2024-09-23 00:00:00"
   },
   {
+    id: 5,
     name: "5.png",
     link: "https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg",
     status: 1,
@@ -44,6 +50,7 @@ const tableData = [
     updateTime: "2024-09-23 00:00:00"
   },
   {
+    id: 6,
     name: "6.png",
     link: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
     status: 1,
@@ -51,6 +58,7 @@ const tableData = [
     updateTime: "2024-09-23 00:00:00"
   },
   {
+    id: 7,
     name: "7.png",
     link: "https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg",
     status: 1,
@@ -73,6 +81,15 @@ const reviewDialogRef = ref(null);
 const handleReviewSlides = () => {
   const pics: string[] = tableData.filter(item => item.status === 1).map(item => item.link);
   reviewDialogRef.value.open(pics);
+};
+
+const editDialogRef = ref(null);
+const handleAddAndUpdate = (type: string, id?: number) => {
+  if (type === "add") {
+    editDialogRef.value.open(type);
+  } else if (type === "update") {
+    editDialogRef.value.open(type, id);
+  }
 };
 </script>
 
@@ -110,7 +127,7 @@ const handleReviewSlides = () => {
 
     <el-card shadow="never">
       <div class="mb-[12px]">
-        <el-button type="primary" :icon="Plus">新增轮播图</el-button>
+        <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增轮播图</el-button>
         <el-button :icon="View" @click="handleReviewSlides">效果预览</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
@@ -136,7 +153,9 @@ const handleReviewSlides = () => {
         <el-table-column prop="updateTime" label="最近更新时间" align="center" width="180px" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
-            <el-button link type="primary" :data-name="row.name">编辑</el-button>
+            <el-button link type="primary" :data-name="row.name" @click="handleAddAndUpdate('update', row.id)"
+              >编辑</el-button
+            >
             <el-button link type="danger" :data-name="row.name">删除</el-button>
           </template>
         </el-table-column>
@@ -150,7 +169,8 @@ const handleReviewSlides = () => {
       />
     </el-card>
 
-    <ReviewDialog ref="reviewDialogRef" />
+    <reviewDialog ref="reviewDialogRef" />
+    <editDialog ref="editDialogRef" />
   </div>
 </template>
 
