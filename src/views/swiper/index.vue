@@ -77,7 +77,7 @@ const tableData = ref([
 ]);
 
 const formInline = reactive({
-  user: "",
+  name: "",
   status: 0,
   date: ""
 });
@@ -121,7 +121,7 @@ const handleDelete = (id: number) => {
     <el-card class="mb-[24px]" shadow="never">
       <el-form class="mb-[-18px] form-inline" :inline="true" :model="formInline">
         <el-form-item label="图片名称">
-          <el-input v-model="formInline.user" placeholder="请输入图片名称" clearable />
+          <el-input v-model="formInline.name" placeholder="请输入图片名称" clearable />
         </el-form-item>
         <el-form-item label="上下架状态">
           <el-select v-model="formInline.status" placeholder="请选择上下架状态">

@@ -125,7 +125,7 @@ const tableData = ref([
 ]);
 
 const formInline = reactive({
-  user: "",
+  name: "",
   status: 0,
   date: ""
 });
@@ -163,7 +163,7 @@ const handleDelete = (id: number) => {
     <el-card class="mb-[24px]" shadow="never">
       <el-form class="mb-[-18px] form-inline" :inline="true" :model="formInline">
         <el-form-item label="标签名称">
-          <el-input v-model="formInline.user" placeholder="请输入标签名称" clearable />
+          <el-input v-model="formInline.name" placeholder="请输入标签名称" clearable />
         </el-form-item>
         <el-form-item label="上下架状态">
           <el-select v-model="formInline.status" placeholder="请选择上下架状态">
@@ -194,6 +194,7 @@ const handleDelete = (id: number) => {
       <div class="mb-[12px]">
         <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增标签</el-button>
       </div>
+
       <el-table :data="tableData" style="width: 100%">
         <el-table-column label="序号" align="center" width="100px">
           <template #default="{ $index }">
