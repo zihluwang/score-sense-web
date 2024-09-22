@@ -49,8 +49,11 @@ import VueTippy from "vue-tippy";
 app.use(VueTippy);
 
 getPlatformConfig(app).then(async config => {
+  console.log("platform config 加载结束了");
   setupStore(app);
+  console.log("pinia 加载结束了");
   app.use(router);
+  console.log("router 加载结束了");
   await router.isReady();
   injectResponsiveStorage(app, config);
   app.use(MotionPlugin).use(useElementPlus).use(Table);
