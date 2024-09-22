@@ -3,6 +3,7 @@ import { reactive, ref } from "vue";
 import { Search, Refresh, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
+import editDialog from "./editDialog.vue";
 
 defineOptions({
   name: "CategoryIndex"
@@ -12,6 +13,7 @@ const tableData = ref([
   {
     id: 1,
     name: "最新",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -19,6 +21,7 @@ const tableData = ref([
   {
     id: 2,
     name: "公务员",
+    weight: 0,
     status: 2,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -26,6 +29,7 @@ const tableData = ref([
   {
     id: 3,
     name: "事业单位",
+    weight: 0,
     status: 2,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -33,6 +37,7 @@ const tableData = ref([
   {
     id: 4,
     name: "教师",
+    weight: 0,
     status: 2,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -40,6 +45,7 @@ const tableData = ref([
   {
     id: 5,
     name: "军队文职",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -47,6 +53,7 @@ const tableData = ref([
   {
     id: 6,
     name: "医疗",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -54,6 +61,7 @@ const tableData = ref([
   {
     id: 7,
     name: "研究生",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -61,6 +69,7 @@ const tableData = ref([
   {
     id: 8,
     name: "选调生",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -68,6 +77,7 @@ const tableData = ref([
   {
     id: 9,
     name: "公安招警",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -75,6 +85,7 @@ const tableData = ref([
   {
     id: 10,
     name: "遴选",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -82,6 +93,7 @@ const tableData = ref([
   {
     id: 11,
     name: "国企",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -89,6 +101,7 @@ const tableData = ref([
   {
     id: 12,
     name: "三支一扶",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -96,6 +109,7 @@ const tableData = ref([
   {
     id: 13,
     name: "书记员",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -103,6 +117,7 @@ const tableData = ref([
   {
     id: 14,
     name: "六项人员",
+    weight: 0,
     status: 1,
     createTime: "2024-09-22 00:00:00",
     updateTime: "2024-09-23 00:00:00"
@@ -118,12 +133,6 @@ const formInline = reactive({
 const onSubmit = () => {
   console.log("submit!");
 };
-
-// const reviewDialogRef = ref(null);
-// const handleReviewSlides = () => {
-//   const pics: string[] = tableData.value.filter(item => item.status === 1).map(item => item.link);
-//   reviewDialogRef.value.open(pics);
-// };
 
 const editDialogRef = ref(null);
 const handleAddAndUpdate = (type: string, id?: number) => {
@@ -192,6 +201,7 @@ const handleDelete = (id: number) => {
           </template>
         </el-table-column>
         <el-table-column prop="name" label="标签名称" align="center" />
+        <el-table-column prop="weight" label="权重" align="center" />
         <el-table-column prop="status" label="上下架状态" align="center">
           <template #default="{ row }">
             <el-tag v-if="row.status === 1" type="success">已上架</el-tag>
@@ -215,6 +225,8 @@ const handleDelete = (id: number) => {
         :total="1000"
       />
     </el-card>
+
+    <editDialog ref="editDialogRef" />
   </div>
 </template>
 

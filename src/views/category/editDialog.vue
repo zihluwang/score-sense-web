@@ -10,14 +10,13 @@ const title = ref("");
 const form = reactive({
   name: "",
   status: "",
-  link: "",
   weight: 0
 });
 
 const open = (type: string, id?: number) => {
   reset();
   dialogVisible.value = true;
-  title.value = type === "add" ? "新增轮播图" : "编辑轮播图";
+  title.value = type === "add" ? "新增标签" : "编辑标签";
   if (id) {
     // 获取轮播图信息
     console.log("123");
@@ -27,7 +26,6 @@ const open = (type: string, id?: number) => {
 const reset = () => {
   form.name = "";
   form.status = "";
-  form.link = "";
   form.weight = 0;
 };
 
@@ -35,26 +33,14 @@ defineExpose({ open });
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" title="预览轮播图" width="50%">
+  <el-dialog v-model="dialogVisible" :title="title" width="50%">
     <el-form :model="form" label-width="auto" style="width: 100%">
-      <el-form-item label="图片名称">
-        <el-input v-model="form.name" placeholder="请输入图片名称" />
+      <el-form-item label="标签名称">
+        <el-input v-model="form.name" placeholder="请输入标签名称" />
       </el-form-item>
       <el-form-item label="是否上架">
         <el-switch v-model="form.status" inline-prompt active-text="是" inactive-text="否" />
       </el-form-item>
-      <!-- <el-form-item label="图片上传">
-        <el-upload
-          class="avatar-uploader"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
-      </el-form-item> -->
       <el-form-item label="权重">
         <el-input-number v-model="form.weight" :min="0" :max="100" placeholder="请输入权重" />
       </el-form-item>
