@@ -22,7 +22,7 @@ defineExpose({ open });
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" title="预览轮播图" width="700px">
+  <el-dialog v-model="dialogVisible" title="预览轮播图" width="50%">
     <div class="block text-center">
       <el-carousel>
         <el-carousel-item v-for="item in pics" :key="item">

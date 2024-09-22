@@ -33,7 +33,7 @@ defineExpose({ open });
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" title="预览轮播图" width="500px">
+  <el-dialog v-model="dialogVisible" title="预览轮播图" width="50%">
     <el-form :model="form" label-width="auto" style="width: 100%">
       <el-form-item label="图片名称">
         <el-input v-model="form.name" placeholder="请输入图片名称" />
@@ -56,6 +56,7 @@ defineExpose({ open });
     </el-form>
     <template #footer>
       <div class="dialog-footer">
+        <el-button @click="dialogVisible = false"> 取消 </el-button>
         <el-button type="primary" @click="dialogVisible = false"> 确认 </el-button>
       </div>
     </template>
