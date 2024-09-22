@@ -8,7 +8,7 @@ export const useDivisionStore = defineStore("divisions", () => {
   const getDivisions = async () => {
     try {
       const res = await getDivisionsReq();
-      console.log("🚀 ~ getDivisions ~ res:", res);
+      console.log("获取省市数据成功", res);
       setDivisions(res);
     } catch (error) {
       console.error("获取省市数据失败", error);
