@@ -10,6 +10,7 @@ import { defineComponent } from "vue";
 import { ElConfigProvider } from "element-plus";
 import { ReDialog } from "@/components/ReDialog";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+import { useDivisionStore } from "@/store/modules/divisions";
 
 export default defineComponent({
   name: "app",
@@ -21,6 +22,11 @@ export default defineComponent({
     currentLocale() {
       return zhCn;
     }
+  },
+  mounted() {
+    console.log("App mounted");
+    const divisionStore = useDivisionStore();
+    divisionStore.getDivisions();
   }
 });
 </script>
