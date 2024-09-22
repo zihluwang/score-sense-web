@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getReviewSwiperReq, ISwiperListItem } from "@/api/swiper";
 import { ref } from "vue";
 
 defineOptions({
@@ -6,12 +7,23 @@ defineOptions({
 });
 
 const dialogVisible = ref(false);
-const pics = ref<string[]>([]);
+const pics = ref<ISwiperListItem[]>([]);
 
-const open = (_pics: string[]) => {
+const getReviewSwiper = async () => {
+  try {
+    const res = await getReviewSwiperReq();
+    console.log("获取预览轮播图列表成功", res);
+    pics.value = res;
+  } catch (error) {
+    console.error("获取预览轮播图列表失败", error);
+  }
+};
+
+const open = async () => {
   reset();
   dialogVisible.value = true;
-  pics.value = _pics;
+  // 发请求获取完整轮播图列表
+  await getReviewSwiper();
 };
 
 const reset = () => {
@@ -25,8 +37,8 @@ defineExpose({ open });
   <el-dialog v-model="dialogVisible" title="预览轮播图" width="50%">
     <div class="block text-center">
       <el-carousel>
-        <el-carousel-item v-for="item in pics" :key="item">
-          <el-image style="width: 100%; height: 100%" :src="item" fit="cover" />
+        <el-carousel-item v-for="item in pics" :key="item.id">
+          <el-image style="width: 100%; height: 100%" :src="item.imageUrl" fit="cover" />
         </el-carousel-item>
       </el-carousel>
     </div>

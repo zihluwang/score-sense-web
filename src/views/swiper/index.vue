@@ -88,8 +88,7 @@ const onSubmit = () => {
 
 const reviewDialogRef = ref(null);
 const handleReviewSlides = () => {
-  const pics: string[] = tableData.value.filter(item => item.status === 1).map(item => item.link);
-  reviewDialogRef.value.open(pics);
+  reviewDialogRef.value.open();
 };
 
 const editDialogRef = ref(null);
