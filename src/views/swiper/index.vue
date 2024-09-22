@@ -71,7 +71,7 @@ const tableData = ref([
 
 const formInline = reactive({
   user: "",
-  region: "",
+  status: 0,
   date: ""
 });
 
@@ -117,7 +117,7 @@ const handleDelete = (id: number) => {
           <el-input v-model="formInline.user" placeholder="请输入图片名称" clearable />
         </el-form-item>
         <el-form-item label="上下架状态">
-          <el-select v-model="formInline.region" placeholder="请选择状态" clearable>
+          <el-select v-model="formInline.status" placeholder="请选择上下架状态">
             <el-option label="全部" :value="0" />
             <el-option label="上架" :value="1" />
             <el-option label="下架" :value="2" />
@@ -169,10 +169,8 @@ const handleDelete = (id: number) => {
         <el-table-column prop="updateTime" label="最近更新时间" align="center" width="180px" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
-            <el-button link type="primary" :data-name="row.name" @click="handleAddAndUpdate('update', row.id)"
-              >编辑</el-button
-            >
-            <el-button link type="danger" :data-name="row.name" @click="handleDelete(row.id)">删除</el-button>
+            <el-button link type="primary" @click="handleAddAndUpdate('update', row.id)">编辑</el-button>
+            <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
