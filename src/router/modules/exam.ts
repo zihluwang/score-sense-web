@@ -12,11 +12,12 @@ export default {
   },
   children: [
     {
-      path: "/exam/index",
-      name: "ExamIndex",
-      component: () => import("@/views/exam/index.vue"),
+      path: "/exam/category",
+      name: "ExamCategory",
+      component: () => import("@/views/exam/category/index.vue"),
       meta: {
-        title: "考试管理"
+        title: "分类管理",
+        showParent: true
       }
     }
   ]
