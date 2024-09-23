@@ -16,7 +16,7 @@ const form = reactive({
 const open = (type: string, id?: number) => {
   reset();
   dialogVisible.value = true;
-  title.value = type === "add" ? "新增标签" : "编辑标签";
+  title.value = type === "add" ? "新增分类" : "编辑分类";
   if (id) {
     // 获取轮播图信息
     console.log("123");

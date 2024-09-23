@@ -192,7 +192,7 @@ const handleDelete = (id: number) => {
 
     <el-card shadow="never">
       <div class="mb-[12px]">
-        <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增标签</el-button>
+        <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增分类</el-button>
       </div>
 
       <el-table :data="tableData" style="width: 100%">
