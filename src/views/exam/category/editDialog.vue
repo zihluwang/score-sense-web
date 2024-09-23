@@ -35,7 +35,7 @@ defineExpose({ open });
 <template>
   <el-dialog v-model="dialogVisible" :title="title" width="50%">
     <el-form :model="form" label-width="auto" style="width: 100%">
-      <el-form-item label="标签名称">
+      <el-form-item label="分类名称">
         <el-input v-model="form.name" placeholder="请输入标签名称" />
       </el-form-item>
       <el-form-item label="是否上架">

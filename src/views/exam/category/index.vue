@@ -162,7 +162,7 @@ const handleDelete = (id: number) => {
   <div>
     <el-card class="mb-[24px]" shadow="never">
       <el-form class="mb-[-18px] form-inline" :inline="true" :model="formInline">
-        <el-form-item label="标签名称">
+        <el-form-item label="分类名称">
           <el-input v-model="formInline.name" placeholder="请输入标签名称" clearable />
         </el-form-item>
         <el-form-item label="上下架状态">
@@ -201,7 +201,7 @@ const handleDelete = (id: number) => {
             {{ $index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="标签名称" align="center" />
+        <el-table-column prop="name" label="分类名称" align="center" />
         <el-table-column prop="weight" label="权重" align="center" />
         <el-table-column prop="status" label="上下架状态" align="center">
           <template #default="{ row }">
