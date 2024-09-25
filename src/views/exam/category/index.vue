@@ -1,137 +1,50 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { Search, Refresh, Plus } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
 import editDialog from "./editDialog.vue";
+import { deleteCategoryReq, getExamCategoryListReq, ICategoryPageParams } from "@/api/examCategory";
 
 defineOptions({
   name: "CategoryIndex"
 });
 
-const tableData = ref([
-  {
-    id: 1,
-    name: "最新",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 2,
-    name: "公务员",
-    weight: 0,
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 3,
-    name: "事业单位",
-    weight: 0,
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 4,
-    name: "教师",
-    weight: 0,
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 5,
-    name: "军队文职",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 6,
-    name: "医疗",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 7,
-    name: "研究生",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 8,
-    name: "选调生",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 9,
-    name: "公安招警",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 10,
-    name: "遴选",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 11,
-    name: "国企",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 12,
-    name: "三支一扶",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 13,
-    name: "书记员",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 14,
-    name: "六项人员",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  }
-]);
+const tableData = ref([]);
 
-const formInline = reactive({
-  name: "",
-  status: 0,
-  date: ""
+const paginationConfig = reactive({
+  total: 0,
+  currentPage: 1,
+  pageSize: 10
 });
 
-const onSubmit = () => {
-  console.log("submit!");
+/** 请求表格数据 */
+const getList = async () => {
+  try {
+    const reqData: ICategoryPageParams = {
+      name: formInline.name || undefined,
+      currentPage: paginationConfig.currentPage || 1,
+      pageSize: paginationConfig.pageSize || 10
+    };
+    const res = await getExamCategoryListReq(reqData);
+    console.log("获取考试分类成功", res);
+    paginationConfig.total = res.totalRow;
+    tableData.value = res.records;
+  } catch (e) {
+    console.log("获取考试分类失败", e);
+    message("获取考试分类列表失败", { type: "error" });
+  }
+};
+
+const formInline = reactive({
+  id: "",
+  name: ""
+});
+
+/** 点击重置 */
+const onReset = () => {
+  formInline.name = "";
+  getList();
 };
 
 const editDialogRef = ref(null);
@@ -148,14 +61,22 @@ const handleDelete = (id: number) => {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning"
-  }).then(() => {
-    tableData.value.splice(
-      tableData.value.findIndex(item => item.id === id),
-      1
-    );
-    message("登录成功", { type: "success" });
+  }).then(async () => {
+    try {
+      await deleteCategoryReq(id);
+      message("删除成功", { type: "success" });
+      await getList();
+    } catch (e) {
+      message("删除失败", { type: "error" });
+      console.log("删除失败", e);
+    }
   });
 };
+
+onMounted(() => {
+  // 初始化表格
+  getList();
+});
 </script>
 
 <template>
@@ -165,27 +86,9 @@ const handleDelete = (id: number) => {
         <el-form-item label="分类名称">
           <el-input v-model="formInline.name" placeholder="请输入标签名称" clearable />
         </el-form-item>
-        <el-form-item label="上下架状态">
-          <el-select v-model="formInline.status" placeholder="请选择上下架状态">
-            <el-option label="全部" :value="0" />
-            <el-option label="上架" :value="1" />
-            <el-option label="下架" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="创建时间">
-          <el-date-picker
-            v-model="formInline.date"
-            type="datetimerange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="YYYY-MM-DD HH:mm:ss"
-            date-format="YYYY/MM/DD"
-            time-format="HH:mm:ss"
-          />
-        </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="onSubmit">搜索</el-button>
-          <el-button :icon="Refresh" @click="onSubmit">重置</el-button>
+          <el-button type="primary" :icon="Search" @click="getList()">搜索</el-button>
+          <el-button :icon="Refresh" @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -202,15 +105,6 @@ const handleDelete = (id: number) => {
           </template>
         </el-table-column>
         <el-table-column prop="name" label="分类名称" align="center" />
-        <el-table-column prop="weight" label="权重" align="center" />
-        <el-table-column prop="status" label="上下架状态" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.status === 1" type="success">已上架</el-tag>
-            <el-tag v-if="row.status === 2" type="info">已下架</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" align="center" />
-        <el-table-column prop="updateTime" label="最近更新时间" align="center" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row.id)">编辑</el-button>
@@ -220,10 +114,13 @@ const handleDelete = (id: number) => {
       </el-table>
 
       <el-pagination
+        v-model:page-size="paginationConfig.pageSize"
+        v-model:current-page="paginationConfig.currentPage"
         class="mt-[12px] justify-end"
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000"
+        :total="paginationConfig.total"
+        @change="getList"
       />
     </el-card>
 
