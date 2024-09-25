@@ -13,73 +13,43 @@ const tableData = ref([
   {
     id: 1,
     name: "宜秀区政协委员履职服务中心",
-    code: "1604001",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604001"
   },
   {
     id: 2,
     name: "宜秀区党风廉政宣教中心",
-    code: "1604002",
-    weight: 0,
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604002"
   },
   {
     id: 3,
     name: "宜秀区政协委员履职服务中心",
-    code: "1604003",
-    weight: 0,
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604003"
   },
   {
     id: 4,
     name: "宜秀区党风廉政宣教中心",
-    code: "1604004",
-    weight: 0,
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604004"
   },
   {
     id: 5,
     name: "宜秀区政协委员履职服务中心",
-    code: "1604005",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604005"
   },
   {
     id: 6,
     name: "宜秀区党风廉政宣教中心",
-    code: "1604006",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604006"
   },
   {
     id: 7,
     name: "宜秀区政协委员履职服务中心",
-    code: "1604007",
-    weight: 0,
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
+    code: "1604007"
   }
 ]);
 
 const formInline = reactive({
   name: "",
-  code: "",
-  status: 0,
-  date: ""
+  code: ""
 });
 
 const onSubmit = () => {
@@ -120,24 +90,6 @@ const handleDelete = (id: number) => {
         <el-form-item label="岗位代码">
           <el-input v-model="formInline.code" placeholder="请输入岗位代码" clearable />
         </el-form-item>
-        <el-form-item label="上下架状态">
-          <el-select v-model="formInline.status" placeholder="请选择上下架状态">
-            <el-option label="全部" :value="0" />
-            <el-option label="上架" :value="1" />
-            <el-option label="下架" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="创建时间">
-          <el-date-picker
-            v-model="formInline.date"
-            type="datetimerange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="YYYY-MM-DD HH:mm:ss"
-            date-format="YYYY/MM/DD"
-            time-format="HH:mm:ss"
-          />
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="onSubmit">搜索</el-button>
           <el-button :icon="Refresh" @click="onSubmit">重置</el-button>
@@ -158,15 +110,6 @@ const handleDelete = (id: number) => {
         </el-table-column>
         <el-table-column prop="name" label="岗位名称" align="center" />
         <el-table-column prop="code" label="岗位代码" align="center" />
-        <el-table-column prop="weight" label="权重" align="center" />
-        <el-table-column prop="status" label="上下架状态" align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.status === 1" type="success">已上架</el-tag>
-            <el-tag v-if="row.status === 2" type="info">已下架</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" align="center" />
-        <el-table-column prop="updateTime" label="最近更新时间" align="center" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row.id)">编辑</el-button>
