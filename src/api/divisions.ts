@@ -1,5 +1,4 @@
 import { http } from "@/utils/http";
-import { getBaseUrl } from "./utils";
 
 export interface IDivisionItem {
   code: string; // 地理编码
@@ -9,5 +8,5 @@ export interface IDivisionItem {
 
 /** 获取省市列表数据 */
 export const getDivisionsReq = () => {
-  return http.request<IDivisionItem[]>("get", getBaseUrl("/divisions/"));
+  return http.request<IDivisionItem[]>("get", "/divisions/");
 };
