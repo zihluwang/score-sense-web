@@ -6,7 +6,7 @@ export default {
   component: Layout,
   redirect: "/exam/index",
   meta: {
-    icon: "ep:home-filled",
+    icon: "ep:edit",
     title: "考试管理",
     rank: 5
   },

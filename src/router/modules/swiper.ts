@@ -6,7 +6,7 @@ export default {
   component: Layout,
   redirect: "/swiper/index",
   meta: {
-    icon: "ep:home-filled",
+    icon: "ep:picture-filled",
     title: "轮播图管理",
     rank: 1
   },

@@ -6,7 +6,7 @@ export default {
   component: Layout,
   redirect: "/job-position/index",
   meta: {
-    icon: "ep:home-filled",
+    icon: "ep:briefcase",
     title: "岗位管理",
     rank: 3
   },
