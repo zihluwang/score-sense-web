@@ -8,7 +8,7 @@ export default {
   meta: {
     icon: "ep:home-filled",
     title: "考试管理",
-    rank: 4
+    rank: 5
   },
   children: [
     {
@@ -17,6 +17,15 @@ export default {
       component: () => import("@/views/exam/category/index.vue"),
       meta: {
         title: "分类管理",
+        showParent: true
+      }
+    },
+    {
+      path: "/exam/paper",
+      name: "ExamPaper",
+      component: () => import("@/views/exam/paper/index.vue"),
+      meta: {
+        title: "试卷管理",
         showParent: true
       }
     }
