@@ -29,6 +29,10 @@ jobs:
       - name: Build
         run: pnpm build:staging
 
+      - name: Check build outputs
+        run: ls -l
+        working-directory: dist
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
