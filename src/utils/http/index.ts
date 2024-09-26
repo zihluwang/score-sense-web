@@ -18,7 +18,7 @@ const defaultConfig: AxiosRequestConfig = {
   paramsSerializer: {
     serialize: stringify as unknown as CustomParamsSerializer
   },
-  baseURL: "http://localhost:8080"
+  baseURL: import.meta.env.VITE_API_BASE_URL
 };
 
 class PureHttp {

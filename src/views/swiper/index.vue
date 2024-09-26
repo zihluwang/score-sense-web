@@ -1,96 +1,65 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { Search, Refresh, Plus, View } from "@element-plus/icons-vue";
 import reviewDialog from "./reviewDialog.vue";
 import editDialog from "./editDialog.vue";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
+import { deleteSwiperReq, getSwiperListReq, ISwiperListParams } from "@/api/swiper";
+import { IMAGE_BASE_URL } from "@/config/app";
 
 defineOptions({
   name: "SwiperIndex"
 });
 
-const tableData = ref([
-  {
-    id: 1,
-    name: "1.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 2,
-    name: "2.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg",
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 3,
-    name: "3.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg",
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 4,
-    name: "4.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg",
-    status: 2,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 5,
-    name: "5.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg",
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 6,
-    name: "6.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg",
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  },
-  {
-    id: 7,
-    name: "7.png",
-    weight: 0,
-    link: "https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg",
-    status: 1,
-    createTime: "2024-09-22 00:00:00",
-    updateTime: "2024-09-23 00:00:00"
-  }
-]);
+/** 表格数据 */
+const tableData = ref([]);
 
-const formInline = reactive({
-  name: "",
-  status: 0,
-  date: ""
+const paginationConfig = reactive({
+  total: 0,
+  currentPage: 1,
+  pageSize: 10
 });
 
-const onSubmit = () => {
-  console.log("submit!");
+/** 请求表格数据 */
+const getList = async () => {
+  try {
+    const reqData: ISwiperListParams = {
+      name: formInline.name || undefined,
+      status: formInline.status || undefined,
+      currentPage: paginationConfig.currentPage || 1,
+      pageSize: paginationConfig.pageSize || 10
+    };
+    const res = await getSwiperListReq(reqData);
+    console.log("获取轮播图成功", res);
+    paginationConfig.total = res.totalRow;
+    tableData.value = res.records;
+  } catch (e) {
+    console.log("获取轮播图失败", e);
+    message("获取轮播图列表失败", { type: "error" });
+  }
 };
 
+/** 搜索表单 */
+const formInline = reactive({
+  name: "",
+  status: ""
+});
+
+/** 点击重置 */
+const onReset = () => {
+  formInline.name = "";
+  formInline.status = "";
+  getList();
+};
+
+/** 点击查看轮播图 */
 const reviewDialogRef = ref(null);
 const handleReviewSlides = () => {
   reviewDialogRef.value.open();
 };
 
+/** 点击新增和更新 */
 const editDialogRef = ref(null);
 const handleAddAndUpdate = (type: string, id?: number) => {
   if (type === "add") {
@@ -100,19 +69,27 @@ const handleAddAndUpdate = (type: string, id?: number) => {
   }
 };
 
+/** 点击删除 */
 const handleDelete = (id: number) => {
   ElMessageBox.confirm("删除操作不可逆，确认删除？", "注意", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning"
-  }).then(() => {
-    tableData.value.splice(
-      tableData.value.findIndex(item => item.id === id),
-      1
-    );
-    message("登录成功", { type: "success" });
+  }).then(async () => {
+    try {
+      await deleteSwiperReq(id);
+      message("删除成功", { type: "success" });
+      await getList();
+    } catch (e) {
+      message("删除失败", { type: "error" });
+    }
   });
 };
+
+onMounted(() => {
+  // 初始化表格
+  getList();
+});
 </script>
 
 <template>
@@ -124,25 +101,13 @@ const handleDelete = (id: number) => {
         </el-form-item>
         <el-form-item label="上下架状态">
           <el-select v-model="formInline.status" placeholder="请选择上下架状态">
-            <el-option label="全部" :value="0" />
-            <el-option label="上架" :value="1" />
-            <el-option label="下架" :value="2" />
+            <el-option label="上架" value="ENABLED" />
+            <el-option label="下架" value="DISABLED" />
           </el-select>
         </el-form-item>
-        <el-form-item label="上传时间">
-          <el-date-picker
-            v-model="formInline.date"
-            type="datetimerange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="YYYY-MM-DD HH:mm:ss"
-            date-format="YYYY/MM/DD"
-            time-format="HH:mm:ss"
-          />
-        </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="onSubmit">搜索</el-button>
-          <el-button :icon="Refresh" @click="onSubmit">重置</el-button>
+          <el-button type="primary" :icon="Search" @click="getList">搜索</el-button>
+          <el-button :icon="Refresh" @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -159,21 +124,17 @@ const handleDelete = (id: number) => {
           </template>
         </el-table-column>
         <el-table-column prop="name" label="图片名称" align="center" />
-        <el-table-column prop="weight" label="权重" align="center" />
-        <el-table-column prop="link" label="图片链接" align="center" />
-        <el-table-column label="图片" align="center" width="120px">
+        <el-table-column label="图片" align="center">
           <template #default="{ row }">
-            <el-image style="width: 100px; height: 100px" :src="row.link" fit="cover" />
+            <el-image style="width: 100px; height: 100px" :src="`${IMAGE_BASE_URL}/${row.imageId}`" fit="cover" />
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="上下架状态" align="center" width="180px">
+        <el-table-column label="上下架状态" align="center">
           <template #default="{ row }">
             <el-tag v-if="row.status === 1" type="success">已上架</el-tag>
-            <el-tag v-if="row.status === 2" type="info">已下架</el-tag>
+            <el-tag v-if="row.status === 0" type="info">已下架</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="上传时间" align="center" width="180px" />
-        <el-table-column prop="updateTime" label="最近更新时间" align="center" width="180px" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row.id)">编辑</el-button>
@@ -183,15 +144,18 @@ const handleDelete = (id: number) => {
       </el-table>
 
       <el-pagination
+        v-model:page-size="paginationConfig.pageSize"
+        v-model:current-page="paginationConfig.currentPage"
         class="mt-[12px] justify-end"
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000"
+        :total="paginationConfig.total"
+        @change="getList"
       />
     </el-card>
 
     <reviewDialog ref="reviewDialogRef" />
-    <editDialog ref="editDialogRef" />
+    <editDialog ref="editDialogRef" @update:table-data="getList" />
   </div>
 </template>
 
