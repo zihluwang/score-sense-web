@@ -5,7 +5,7 @@ import type { ComponentSize, FormInstance, FormRules, UploadRawFile } from "elem
 import { IMAGE_BASE_URL } from "@/config/app";
 import { Plus } from "@element-plus/icons-vue";
 import { message } from "@/utils/message";
-import { addNewSwiperReq } from "@/api/swiper";
+import { addNewSwiperReq, ISwiperListItem, updateSwiperReq } from "@/api/swiper";
 import { uploadFileReq } from "@/api/upload";
 import { nanoid } from "nanoid";
 
@@ -26,30 +26,35 @@ interface RuleForm {
 const dialogVisible = ref(false);
 const title = ref("");
 const form = reactive({
+  id: "",
   name: "",
   status: true,
   fileList: [],
-  imageId: 0
+  imageId: ""
 });
 const imageUrl = ref("");
 const dialogType = ref("");
 
-const open = (type: string, id?: number) => {
+const open = (type: string, row?: ISwiperListItem) => {
   reset();
   dialogVisible.value = true;
   dialogType.value = type;
   title.value = type === "add" ? "新增轮播图" : "编辑轮播图";
-  if (id) {
-    // 获取轮播图信息
-    console.log("123");
+  if (row) {
+    form.id = row.id;
+    form.name = row.name;
+    form.status = !!row.status;
+    form.imageId = row.imageId;
+    imageUrl.value = IMAGE_BASE_URL + "/" + form.imageId;
   }
 };
 
 const reset = () => {
+  form.id = "";
   form.name = "";
   form.status = true;
   form.fileList = [];
-  form.imageId = 0;
+  form.imageId = "";
   imageUrl.value = "";
 };
 
@@ -78,6 +83,7 @@ const handleExceed: UploadProps["onExceed"] = files => {
 };
 
 const handleChange = (file: UploadUserFile, fileList: UploadUserFile[]) => {
+  form.fileList = [];
   form.fileList.push(file);
 };
 
@@ -109,22 +115,16 @@ const submit = async (formEl: FormInstance | undefined) => {
           await addNewSwiperReq(reqData2);
           message("新增轮播图成功", { type: "success" });
         } else {
-          // // 第一件事上传图片
-          // const reqData1 = new FormData();
-          // reqData1.append("file", form.fileList[0].raw as Blob);
-          // reqData1.append("name", form.name);
-          // const res1 = await upload(reqData1);
-          // console.log("上传图片", res1);
-          // // 第二件事，提交表单
-          // const reqData2 = {
-          //   name: form.name,
-          //   status: form.status,
-          //   imageId: nanoid() //=> "V1StGXR8_Z5jdHi6B-myT"
-          // };
-          // const res2 = await addNewSwiperReq(reqData2);
-          // // 成功的话关闭
-          // console.log("提交表单：", form);
-          // message("新增轮播图成功", { type: "success" });
+          // 提交表单
+          const reqData2 = {
+            id: form.id,
+            name: form.name,
+            status: form.status,
+            imageId: form.imageId
+          };
+          await updateSwiperReq(reqData2);
+          // 成功的话关闭
+          message("更新轮播图成功", { type: "success" });
         }
         dialogVisible.value = false;
         emit("update:tableData");
@@ -138,7 +138,7 @@ const submit = async (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" title="预览轮播图" width="50%">
+  <el-dialog v-model="dialogVisible" :title="title" width="50%">
     <el-form ref="ruleFormRef" :model="form" label-width="auto" style="width: 100%" :rules="rules">
       <el-form-item label="图片名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入图片名称" />
@@ -157,18 +157,6 @@ const submit = async (formEl: FormInstance | undefined) => {
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
-        <!-- <el-upload
-          v-model:file-list="form.fileList"
-          class="upload-demo"
-          action="#"
-          :limit="1"
-          :on-exceed="handleExceed"
-          :on-change="handleChange"
-          :before-upload="beforeUpload"
-        >
-          <img v-if="imageUrl" :src="imageUrl" alt="" />
-          <el-icon v-else><Plus /></el-icon>
-        </el-upload> -->
       </el-form-item>
     </el-form>
     <template #footer>

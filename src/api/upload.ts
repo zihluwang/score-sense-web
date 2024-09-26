@@ -2,7 +2,7 @@ import { http } from "@/utils/http";
 
 export interface IUploadFileResp {
   contentType: string;
-  id: number;
+  id: string;
   name: string;
   path: string;
 }

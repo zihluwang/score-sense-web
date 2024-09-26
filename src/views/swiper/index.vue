@@ -5,7 +5,7 @@ import reviewDialog from "./reviewDialog.vue";
 import editDialog from "./editDialog.vue";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
-import { deleteSwiperReq, getSwiperListReq, ISwiperListParams } from "@/api/swiper";
+import { deleteSwiperReq, getSwiperListReq, ISwiperListItem, ISwiperListParams } from "@/api/swiper";
 import { IMAGE_BASE_URL } from "@/config/app";
 
 defineOptions({
@@ -43,7 +43,7 @@ const getList = async () => {
 /** 搜索表单 */
 const formInline = reactive({
   name: "",
-  status: ""
+  status: undefined
 });
 
 /** 点击重置 */
@@ -61,11 +61,11 @@ const handleReviewSlides = () => {
 
 /** 点击新增和更新 */
 const editDialogRef = ref(null);
-const handleAddAndUpdate = (type: string, id?: number) => {
+const handleAddAndUpdate = (type: string, row?: ISwiperListItem) => {
   if (type === "add") {
     editDialogRef.value.open(type);
   } else if (type === "update") {
-    editDialogRef.value.open(type, id);
+    editDialogRef.value.open(type, row);
   }
 };
 
@@ -137,7 +137,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleAddAndUpdate('update', row.id)">编辑</el-button>
+            <el-button link type="primary" @click="handleAddAndUpdate('update', row)">编辑</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>

@@ -2,16 +2,16 @@ import { http } from "@/utils/http";
 
 export interface ISwiperListParams {
   name?: string;
-  status?: string;
+  status?: number;
   currentPage: number;
   pageSize: number;
 }
 
 export interface ISwiperListItem {
-  id: number;
-  imageId: number;
+  id: string;
+  imageId: string;
   name: string;
-  status: string;
+  status: number;
 }
 
 /** 预览轮播图的请求 */
