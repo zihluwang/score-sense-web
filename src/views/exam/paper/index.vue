@@ -86,6 +86,9 @@ const handleDelete = (id: number) => {
 };
 
 onMounted(() => {
+  // 初始化省市列表
+  const divisionStore = useDivisionStore();
+  divisionStore.getDivisions();
   // 初始化表格
   getList();
 });
