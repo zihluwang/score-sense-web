@@ -2,7 +2,8 @@ import Axios, { type AxiosInstance, type AxiosRequestConfig, type CustomParamsSe
 import type { PureHttpError, RequestMethods, PureHttpResponse, PureHttpRequestConfig } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { getToken, formatToken } from "@/utils/auth";
+// import { getToken, formatToken } from "@/utils/auth";
+import { getToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
@@ -43,7 +44,8 @@ class PureHttp {
   private static retryOriginalRequest(config: PureHttpRequestConfig) {
     return new Promise(resolve => {
       PureHttp.requests.push((token: string) => {
-        config.headers["Authorization"] = formatToken(token);
+        // config.headers["Authorization"] = formatToken(token);
+        config.headers["Authorization"] = token;
         resolve(config);
       });
     });
@@ -81,7 +83,8 @@ class PureHttp {
                       .handRefreshToken({ refreshToken: data.refreshToken })
                       .then(res => {
                         const token = res.data.accessToken;
-                        config.headers["Authorization"] = formatToken(token);
+                        // config.headers["Authorization"] = formatToken(token);
+                        config.headers["Authorization"] = token;
                         PureHttp.requests.forEach(cb => cb(token));
                         PureHttp.requests = [];
                       })
@@ -91,7 +94,8 @@ class PureHttp {
                   }
                   resolve(PureHttp.retryOriginalRequest(config));
                 } else {
-                  config.headers["Authorization"] = formatToken(data.accessToken);
+                  // config.headers["Authorization"] = formatToken(data.accessToken);
+                  config.headers["Authorization"] = data.accessToken;
                   resolve(config);
                 }
               } else {
@@ -121,6 +125,10 @@ class PureHttp {
         if (PureHttp.initConfig.beforeResponseCallback) {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
+        }
+        // 如果是 /users/login 接口就原样输出，因为需要使用header获取数据
+        if ($config.url === "/users/login") {
+          return response;
         }
         return response.data;
       },

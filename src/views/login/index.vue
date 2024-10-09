@@ -47,10 +47,9 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       const res = await loginReq(toRaw(ruleForm));
       console.log(res);
       setToken({
-        username: res.username || "",
+        username: res.data.username || "",
         roles: ["admin"],
-        accessToken:
-          "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTY29yZVNlbnNlIiwiaWF0IjoxNzI4NDU1MjQ5LCJuYmYiOjE3Mjg0NTUyNDksImF1ZCI6IlNjb3JlU2Vuc2U6QURNSU4iLCJzdWIiOiIxIiwiZXhwIjoxNzMxMDQ3MjQ5LCJqdGkiOiI5YzI5OGI2ZS01MzdmLTQ3MmQtOGRjZi04MmQ5NDMxODJhY2UifQ.egrfHunfdRtztNdU4HviEgNHLXXhfzETivMUFl1oxN71XK9mzrxJcyLwlKdYzdwu_pjeHlsLmyixGkzYi5NFSw"
+        accessToken: res.headers["authorization"] || ""
       } as any);
       // 全部采取静态路由模式
       usePermissionStoreHook().handleWholeMenus([]);
