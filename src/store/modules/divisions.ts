@@ -1,6 +1,6 @@
 import { getDivisionsReq } from "@/api/divisions";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export const useDivisionStore = defineStore("divisions", () => {
   const divisions = ref([]);
@@ -9,7 +9,7 @@ export const useDivisionStore = defineStore("divisions", () => {
     try {
       const res = await getDivisionsReq();
       console.log("获取省市数据成功", res);
-      setDivisions(res);
+      await setDivisions(res);
     } catch (error) {
       console.error("获取省市数据失败", error);
     }
@@ -23,10 +23,22 @@ export const useDivisionStore = defineStore("divisions", () => {
     divisions.value = [];
   };
 
+  const divisionOptions = computed(() => {
+    return divisions.value.map(province => ({
+      value: province.code,
+      label: province.name,
+      children: province.prefectures.map(prefecture => ({
+        value: prefecture.code,
+        label: prefecture.name
+      }))
+    }));
+  });
+
   return {
     divisions,
     getDivisions,
     setDivisions,
-    resetDivisions
+    resetDivisions,
+    divisionOptions
   };
 });
