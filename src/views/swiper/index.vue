@@ -6,7 +6,7 @@ import editDialog from "./editDialog.vue";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
 import { deleteSwiperReq, getSwiperListReq, ISwiperListItem, ISwiperListParams } from "@/api/swiper";
-import { IMAGE_BASE_URL } from "@/config/app";
+import { getAttachmentUrl } from "@/utils/attachments";
 
 defineOptions({
   name: "SwiperIndex"
@@ -100,7 +100,7 @@ onMounted(() => {
           <el-input v-model="formInline.name" placeholder="请输入图片名称" clearable />
         </el-form-item>
         <el-form-item label="上下架状态">
-          <el-select v-model="formInline.status" placeholder="请选择上下架状态">
+          <el-select v-model="formInline.status" placeholder="请选择上下架状态" clearable>
             <el-option label="上架" value="ENABLED" />
             <el-option label="下架" value="DISABLED" />
           </el-select>
@@ -126,7 +126,7 @@ onMounted(() => {
         <el-table-column prop="name" label="图片名称" align="center" />
         <el-table-column label="图片" align="center">
           <template #default="{ row }">
-            <el-image style="width: 100px; height: 100px" :src="`${IMAGE_BASE_URL}/${row.imageId}`" fit="cover" />
+            <el-image style="width: 320px; height: 180px" :src="getAttachmentUrl(row.imageId)" fit="cover" />
           </template>
         </el-table-column>
         <el-table-column label="上下架状态" align="center">

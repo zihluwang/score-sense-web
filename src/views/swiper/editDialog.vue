@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
-import { genFileId, type UploadInstance, type UploadProps, type UploadUserFile } from "element-plus";
-import type { ComponentSize, FormInstance, FormRules, UploadRawFile } from "element-plus";
-import { IMAGE_BASE_URL } from "@/config/app";
+import { UploadRequestOptions, type UploadUserFile } from "element-plus";
+import type { FormInstance, FormRules, UploadRawFile } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
 import { message } from "@/utils/message";
 import { addNewSwiperReq, ISwiperListItem, updateSwiperReq } from "@/api/swiper";
 import { uploadFileReq } from "@/api/upload";
 import { nanoid } from "nanoid";
+import { getAttachmentUrl } from "@/utils/attachments";
 
 defineOptions({
   name: "EditDialog"
@@ -45,7 +45,7 @@ const open = (type: string, row?: ISwiperListItem) => {
     form.name = row.name;
     form.status = !!row.status;
     form.imageId = row.imageId;
-    imageUrl.value = IMAGE_BASE_URL + "/" + form.imageId;
+    imageUrl.value = getAttachmentUrl(row.imageId);
   }
 };
 
@@ -73,30 +73,33 @@ const rules = reactive<FormRules<RuleForm>>({
   fileList: [{ validator: checkImage, trigger: "change" }]
 });
 
-const upload = ref<UploadInstance>();
-
-const handleExceed: UploadProps["onExceed"] = files => {
-  upload.value!.clearFiles();
-  const file = files[0] as UploadRawFile;
-  file.uid = genFileId();
-  upload.value!.handleStart(file);
+const onBefore = (file: UploadRawFile) => {
+  const isExceed = file.size / 1024 / 1024 > 5;
+  if (isExceed) {
+    message("文件大小不能超过5MB");
+    return false;
+  }
+  // 清空之前的文件，确保只有一个文件
+  form.fileList = [file];
+  return true;
 };
 
-const handleChange = (file: UploadUserFile, fileList: UploadUserFile[]) => {
-  form.fileList = [];
-  form.fileList.push(file);
-};
-
-const beforeUpload = (rawFile: UploadRawFile) => {
+const customUpload = (options: UploadRequestOptions) => {
+  const { file, onSuccess, onError } = options;
   const formData = new FormData();
-  formData.append("file", form.fileList[0].raw);
+  formData.append("file", file);
   formData.append("name", nanoid());
-  uploadFileReq(formData).then(res => {
-    console.log(res);
-    form.imageId = res.id;
-    imageUrl.value = IMAGE_BASE_URL + "/" + form.imageId;
-  });
-  return false;
+
+  return uploadFileReq(formData)
+    .then(res => {
+      console.log(res);
+      form.imageId = res.id;
+      imageUrl.value = getAttachmentUrl(form.imageId);
+      message("上传成功", { type: "success" });
+    })
+    .catch(e => {
+      message("上传失败", { type: "error" });
+    });
 };
 
 const ruleFormRef = ref(null);
@@ -109,7 +112,7 @@ const submit = async (formEl: FormInstance | undefined) => {
           // 提交表单
           const reqData2 = {
             name: form.name,
-            status: form.status ? 0 : 1,
+            status: form.status ? 1 : 0,
             imageId: form.imageId
           };
           await addNewSwiperReq(reqData2);
@@ -119,7 +122,7 @@ const submit = async (formEl: FormInstance | undefined) => {
           const reqData2 = {
             id: form.id,
             name: form.name,
-            status: form.status,
+            status: form.status ? 1 : 0,
             imageId: form.imageId
           };
           await updateSwiperReq(reqData2);
@@ -148,21 +151,24 @@ const submit = async (formEl: FormInstance | undefined) => {
       </el-form-item>
       <el-form-item label="图片上传" prop="fileList">
         <el-upload
-          class="avatar-uploader"
-          action="#"
+          v-model:file-list="form.fileList"
           :show-file-list="false"
-          :on-change="handleChange"
-          :before-upload="beforeUpload"
+          class="avatar-uploader"
+          :limit="1"
+          :before-upload="onBefore"
+          :http-request="customUpload"
+          action=""
+          list-type="picture"
         >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" alt="" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
       </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false"> 取消 </el-button>
-        <el-button type="primary" @click="submit(ruleFormRef)"> 确认 </el-button>
+        <el-button @click="dialogVisible = false"> 取消</el-button>
+        <el-button type="primary" @click="submit(ruleFormRef)"> 确认</el-button>
       </div>
     </template>
   </el-dialog>
