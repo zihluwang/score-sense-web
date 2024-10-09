@@ -2,6 +2,7 @@
 import { getReviewSwiperReq, ISwiperListItem } from "@/api/swiper";
 import { ref } from "vue";
 import { IMAGE_BASE_URL } from "@/config/app";
+import { getAttachmentUrl } from "@/utils/attachments";
 
 defineOptions({
   name: "ReviewDialog"
@@ -39,7 +40,7 @@ defineExpose({ open });
     <div class="block text-center">
       <el-carousel>
         <el-carousel-item v-for="item in pics" :key="item.id">
-          <el-image style="width: 100%; height: 100%" :src="`${IMAGE_BASE_URL}/${item.imageId}`" fit="cover" />
+          <el-image style="width: 100%; height: 100%" :src="getAttachmentUrl(item.imageId)" fit="cover" />
         </el-carousel-item>
       </el-carousel>
     </div>
