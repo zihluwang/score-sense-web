@@ -18,6 +18,7 @@ import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
+import { loginReq } from "@/api/login";
 
 defineOptions({
   name: "Login"
@@ -40,18 +41,21 @@ const ruleForm = reactive({
 
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate(valid => {
+  await formEl.validate(async valid => {
     if (valid) {
       loading.value = true;
+      const res = await loginReq(toRaw(ruleForm));
+      console.log(res);
       setToken({
-        username: "admin",
+        username: res.username || "",
         roles: ["admin"],
-        accessToken: "eyJhbGciOiJIUzUxMiJ9.admin"
+        accessToken:
+          "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTY29yZVNlbnNlIiwiaWF0IjoxNzI4NDU1MjQ5LCJuYmYiOjE3Mjg0NTUyNDksImF1ZCI6IlNjb3JlU2Vuc2U6QURNSU4iLCJzdWIiOiIxIiwiZXhwIjoxNzMxMDQ3MjQ5LCJqdGkiOiI5YzI5OGI2ZS01MzdmLTQ3MmQtOGRjZi04MmQ5NDMxODJhY2UifQ.egrfHunfdRtztNdU4HviEgNHLXXhfzETivMUFl1oxN71XK9mzrxJcyLwlKdYzdwu_pjeHlsLmyixGkzYi5NFSw"
       } as any);
       // 全部采取静态路由模式
       usePermissionStoreHook().handleWholeMenus([]);
       addPathMatch();
-      router.push(getTopMenu(true).path);
+      await router.push(getTopMenu(true).path);
       message("登录成功", { type: "success" });
       loading.value = false;
     }
