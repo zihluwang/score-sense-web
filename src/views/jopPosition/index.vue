@@ -5,6 +5,7 @@ import { ref, reactive, onMounted } from "vue";
 import { Search, Refresh, Plus, Download } from "@element-plus/icons-vue";
 import editDialog from "./editDialog.vue";
 import importDialog from "./importDialog.vue";
+import setExamPapersDialog from "./setExamPapersDialog.vue";
 import useDivisions from "@/hooks/useDivisions";
 import { deleteJobReq, getJobListReq, IJobListItem, IJobListReqParams } from "@/api/jobPosition";
 
@@ -92,7 +93,12 @@ const handleDelete = (id: number) => {
 const importDialogRef = ref(null);
 const handleImport = () => {
   console.log(importDialogRef.value);
-  importDialogRef.value.open();
+  importDialogRef?.value?.open();
+};
+
+const setExamPapersDialogRef = ref(null);
+const handleSetExamPapers = (row: IJobListItem) => {
+  setExamPapersDialogRef?.value?.open(row);
 };
 
 onMounted(async () => {
@@ -140,7 +146,7 @@ onMounted(async () => {
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row)">编辑</el-button>
-            <el-button link type="primary">配置试卷</el-button>
+            <el-button link type="primary" @click="handleSetExamPapers(row)">配置试卷</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -159,6 +165,7 @@ onMounted(async () => {
 
     <editDialog ref="editDialogRef" @update:table-data="getList" />
     <importDialog ref="importDialogRef" @update:table-data="getList" />
+    <setExamPapersDialog ref="setExamPapersDialogRef" @update:table-data="getList" />
   </div>
 </template>
 

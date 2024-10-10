@@ -41,9 +41,10 @@ export const addNewJobReq = (data: IAddJobReqParams) => {
  */
 export interface IUpdateJobReqParams {
   id: string;
-  name: string;
-  province: string;
-  prefecture: string;
+  name?: string;
+  province?: string;
+  prefecture?: string;
+  examId?: string[];
 }
 
 export const updateJobReq = (data: IUpdateJobReqParams) => {
