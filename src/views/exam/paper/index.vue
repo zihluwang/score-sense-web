@@ -16,7 +16,6 @@ defineOptions({
   name: "ExamPaper"
 });
 
-const templateTwoRef = ref(null);
 const tableData = ref([]);
 
 const paginationConfig = reactive({
