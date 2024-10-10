@@ -26,14 +26,27 @@ export const getJobListReq = (params: IJobListReqParams) => {
 /**
  * 新增岗位
  */
-export const addNewJobReq = (data: any) => {
+export interface IAddJobReqParams {
+  name: string;
+  province: string;
+  prefecture: string;
+}
+
+export const addNewJobReq = (data: IAddJobReqParams) => {
   return http.request("post", "/vacancies/", { data });
 };
 
 /**
  * 更新岗位
  */
-export const updateJobReq = (data: any) => {
+export interface IUpdateJobReqParams {
+  id: string;
+  name: string;
+  province: string;
+  prefecture: string;
+}
+
+export const updateJobReq = (data: IUpdateJobReqParams) => {
   return http.request("patch", "/vacancies/", { data });
 };
 

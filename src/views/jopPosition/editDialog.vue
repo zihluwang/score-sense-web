@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { message } from "@/utils/message";
-import { FormInstance, FormRules } from "element-plus";
+import { FormInstance } from "element-plus";
 import { ref, reactive } from "vue";
+import { addNewJobReq, IAddJobReqParams, IJobListItem, IUpdateJobReqParams, updateJobReq } from "@/api/jobPosition";
+import useDivisions from "@/hooks/useDivisions";
 
 defineOptions({
   name: "EditDialog"
@@ -11,33 +13,39 @@ const emit = defineEmits<{
   (e: "update:tableData"): void;
 }>();
 
+const { getDivisionList, getProvinceName, getPrefectureName, divisionOptions } = useDivisions();
+
 const dialogVisible = ref(false);
 const title = ref("");
 const dialogType = ref("");
 const form = reactive({
-  name: "",
-  code: ""
+  id: undefined,
+  area: undefined,
+  name: undefined
 });
 
-const rules = reactive<FormRules<{ name: string; code: string }>>({
-  name: [{ required: true, message: "请输入岗位名称", trigger: "blur" }],
-  code: [{ required: true, message: "请输入岗位代码", trigger: "blur" }]
-});
+const rules = reactive({});
 
-const open = (type: string, id?: number) => {
+const open = (type: string, row?: IJobListItem) => {
   reset();
   dialogVisible.value = true;
   dialogType.value = type;
   title.value = type === "add" ? "新增岗位" : "编辑岗位";
-  if (id) {
-    // 获取轮播图信息
-    console.log("123");
+  // 初始化省市区
+  getDivisionList();
+  // 如果存在行数据就进行数据回显
+  if (row) {
+    form.id = row.id;
+    form.name = row.name;
+    form.area = [row.province, row.prefecture];
   }
 };
 
 const reset = () => {
-  form.name = "";
-  form.code = "";
+  form.id = undefined;
+  form.area = undefined;
+  form.name = undefined;
+  ruleFormRef?.value?.resetFields();
 };
 
 defineExpose({ open });
@@ -50,30 +58,23 @@ const submit = async (formEl: FormInstance | undefined) => {
       try {
         if (dialogType.value === "add") {
           // 提交表单
-          // const reqData2 = {
-          //   name: form.name,
-          //   status: form.status ? 0 : 1,
-          //   imageId: form.imageId
-          // };
-          // await addNewSwiperReq(reqData2);
-          // message("新增轮播图成功", { type: "success" });
+          const reqData: IAddJobReqParams = {
+            name: form.name,
+            province: form.area[0],
+            prefecture: form.area[1]
+          };
+          await addNewJobReq(reqData);
+          message("新增岗位成功", { type: "success" });
         } else {
-          // // 第一件事上传图片
-          // const reqData1 = new FormData();
-          // reqData1.append("file", form.fileList[0].raw as Blob);
-          // reqData1.append("name", form.name);
-          // const res1 = await upload(reqData1);
-          // console.log("上传图片", res1);
-          // // 第二件事，提交表单
-          // const reqData2 = {
-          //   name: form.name,
-          //   status: form.status,
-          //   imageId: nanoid() //=> "V1StGXR8_Z5jdHi6B-myT"
-          // };
-          // const res2 = await addNewSwiperReq(reqData2);
-          // // 成功的话关闭
-          // console.log("提交表单：", form);
-          // message("新增轮播图成功", { type: "success" });
+          // 提交表单
+          const reqData: IUpdateJobReqParams = {
+            id: form.id,
+            name: form.name,
+            province: form.area[0],
+            prefecture: form.area[1]
+          };
+          await updateJobReq(reqData);
+          message("更新岗位成功", { type: "success" });
         }
         dialogVisible.value = false;
         emit("update:tableData");
@@ -89,11 +90,11 @@ const submit = async (formEl: FormInstance | undefined) => {
 <template>
   <el-dialog v-model="dialogVisible" :title="title" width="50%">
     <el-form ref="ruleFormRef" :rules="rules" :model="form" label-width="auto" style="width: 100%">
+      <el-form-item label="省市选择">
+        <el-cascader v-model="form.area" :options="divisionOptions" clearable placeholder="请选择省市" />
+      </el-form-item>
       <el-form-item label="岗位名称">
         <el-input v-model="form.name" placeholder="请输入岗位名称" />
-      </el-form-item>
-      <el-form-item label="岗位代码">
-        <el-input v-model="form.code" placeholder="请输入岗位代码" />
       </el-form-item>
     </el-form>
     <template #footer>

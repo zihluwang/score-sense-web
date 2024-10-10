@@ -6,7 +6,7 @@ import { Search, Refresh, Plus, Download } from "@element-plus/icons-vue";
 import editDialog from "./editDialog.vue";
 import importDialog from "./importDialog.vue";
 import useDivisions from "@/hooks/useDivisions";
-import { deleteJobReq, getJobListReq, IJobListReqParams } from "@/api/jobPosition";
+import { deleteJobReq, getJobListReq, IJobListItem, IJobListReqParams } from "@/api/jobPosition";
 
 const { getDivisionList, getProvinceName, getPrefectureName, divisionOptions } = useDivisions();
 
@@ -64,11 +64,11 @@ const onReset = () => {
 };
 
 const editDialogRef = ref(null);
-const handleAddAndUpdate = (type: string, id?: number) => {
+const handleAddAndUpdate = (type: string, row?: IJobListItem) => {
   if (type === "add") {
     editDialogRef.value.open(type);
   } else if (type === "update") {
-    editDialogRef.value.open(type, id);
+    editDialogRef.value.open(type, row);
   }
 };
 
@@ -139,7 +139,7 @@ onMounted(async () => {
         <el-table-column prop="prefectureName" label="所属城市" align="center" />
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleAddAndUpdate('update', row.id)">编辑</el-button>
+            <el-button link type="primary" @click="handleAddAndUpdate('update', row)">编辑</el-button>
             <el-button link type="primary">配置试卷</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
@@ -157,7 +157,7 @@ onMounted(async () => {
       />
     </el-card>
 
-    <editDialog ref="editDialogRef" />
+    <editDialog ref="editDialogRef" @update:table-data="getList" />
     <importDialog ref="importDialogRef" @update:table-data="getList" />
   </div>
 </template>
