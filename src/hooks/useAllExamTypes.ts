@@ -12,7 +12,7 @@ export default function useAllExamTypes() {
     try {
       const res = await getExamCategoryAllReq();
       console.log("获取全部考试分类成功", res.records);
-      examTypes.value = res.records;
+      examTypes.value = res.records.map(item => ({ ...item, id: item.id.toString() }));
     } catch (error) {
       console.error("获取全部考试分类失败", error);
       message("获取全部考试分类失败", { type: "error" });

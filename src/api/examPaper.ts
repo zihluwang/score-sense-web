@@ -3,12 +3,14 @@ import { http } from "@/utils/http";
 export interface IExamPaperItem {
   id?: string;
   name?: string;
-  type?: number;
+  type?: number | string;
   typeName?: string;
   description?: string;
   province?: string;
+  provinceName?: string;
   prefecture?: string;
-  status?: number;
+  prefectureName?: string;
+  status?: number | string;
 }
 
 /**
@@ -28,14 +30,31 @@ export const getExamPaperListReq = (params: IExamPaperListParams) => {
 /**
  * 新增试卷
  */
-export const addNewExamPaperReq = (data: any) => {
+export interface IAddExamPaperParams {
+  name?: string;
+  province?: string;
+  prefecture?: string;
+  description?: string;
+  type?: number | string;
+  status?: number;
+}
+export const addNewExamPaperReq = (data: IAddExamPaperParams) => {
   return http.request("post", "/exams/", { data });
 };
 
 /**
  * 更新试卷信息
  */
-export const updateExamPaperReq = (data: any) => {
+export interface IUpdateExamPaperParams {
+  id: string;
+  name?: undefined;
+  province?: undefined;
+  prefecture?: undefined;
+  description?: undefined;
+  type?: undefined;
+  status?: number;
+}
+export const updateExamPaperReq = (data: IUpdateExamPaperParams) => {
   return http.request("patch", "/exams/", { data });
 };
 

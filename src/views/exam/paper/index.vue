@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { Plus, Refresh, Search, Download } from "@element-plus/icons-vue";
 import { onMounted, reactive, ref } from "vue";
-import { deleteCategoryReq, ICategory } from "@/api/examCategory";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
 import editDialog from "./editDialog.vue";
 import importDialog from "./importDialog.vue";
-import { deleteExamPaper, getExamPaperListReq, IExamPaperListParams } from "@/api/examPaper";
+import { deleteExamPaper, getExamPaperListReq, IExamPaperItem, IExamPaperListParams } from "@/api/examPaper";
 import useAllExamTypes from "@/hooks/useAllExamTypes";
 import useDivisions from "@/hooks/useDivisions";
 
@@ -69,7 +68,7 @@ const onReset = () => {
 };
 
 const editDialogRef = ref(null);
-const handleAddAndUpdate = (type: string, row?: ICategory) => {
+const handleAddAndUpdate = (type: string, row?: IExamPaperItem) => {
   if (type === "add") {
     editDialogRef.value.open(type);
   } else if (type === "update") {
