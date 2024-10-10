@@ -97,11 +97,7 @@ const submit = async () => {
     <el-transfer
       v-model="value"
       :data="data"
-      style="
-
---el-transfer-panel-width: 300px;
-
- text-align: center"
+      class="transfer-diy"
       filterable
       :filter-method="filterMethod"
       filter-placeholder="搜索试卷"
@@ -118,6 +114,12 @@ const submit = async () => {
 </template>
 
 <style scoped lang="scss">
+.transfer-diy {
+  --el-transfer-panel-width: 300px;
+
+  text-align: center;
+}
+
 .dialog-footer-6667777 {
   width: 100%;
 }
