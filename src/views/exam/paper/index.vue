@@ -158,10 +158,11 @@ onMounted(async () => {
             <el-tag v-if="row.status === 0" type="info">已下架</el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" align="center" width="180px">
+        <el-table-column fixed="right" label="操作" align="center" width="250px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row)">编辑</el-button>
             <el-button link type="primary" @click="handleEditExamTopics">配置试题</el-button>
+            <el-button link type="primary" @click="handleEditExamTopics">配置岗位</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>

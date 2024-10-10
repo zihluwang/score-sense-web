@@ -7,7 +7,6 @@ import editDialog from "./editDialog.vue";
 import importDialog from "./importDialog.vue";
 import useDivisions from "@/hooks/useDivisions";
 import { deleteJobReq, getJobListReq, IJobListReqParams } from "@/api/jobPosition";
-import { deleteExamPaper } from "@/api/examPaper";
 
 const { getDivisionList, getProvinceName, getPrefectureName, divisionOptions } = useDivisions();
 
