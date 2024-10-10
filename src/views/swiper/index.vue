@@ -126,7 +126,7 @@ onMounted(() => {
         <el-table-column prop="name" label="图片名称" align="center" />
         <el-table-column label="图片" align="center">
           <template #default="{ row }">
-            <el-image style="width: 320px; height: 180px" :src="getAttachmentUrl(row.imageId)" fit="cover" />
+            <el-image style="width: 320px; height: 180px" :src="getAttachmentUrl(row.imageId)" />
           </template>
         </el-table-column>
         <el-table-column label="上下架状态" align="center">
