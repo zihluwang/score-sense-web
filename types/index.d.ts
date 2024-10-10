@@ -79,3 +79,11 @@ function parseInt(s: string | number, radix?: number): number;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function parseFloat(string: string | number): number;
+
+interface IPageResult<T> {
+  pageNumber: number;
+  pageSize: number;
+  records: T[];
+  totalPage: number;
+  totalRow: number;
+}

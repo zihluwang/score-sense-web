@@ -1,10 +1,28 @@
 import { http } from "@/utils/http";
 
+export interface IExamPaperItem {
+  id?: string;
+  name?: string;
+  type?: number;
+  typeName?: string;
+  description?: string;
+  province?: string;
+  prefecture?: string;
+  status?: number;
+}
+
 /**
  * 获取试卷列表
  */
-export const getExamPaperListReq = (data: any) => {
-  return http.request("get", "/exams/", { data });
+export interface IExamPaperListParams {
+  currentPage: number;
+  pageSize: number;
+  name?: string;
+  divisionCode: string;
+  status?: number;
+}
+export const getExamPaperListReq = (params: IExamPaperListParams) => {
+  return http.request<IPageResult<IExamPaperItem>>("get", "/exams/", { params });
 };
 
 /**
@@ -17,15 +35,15 @@ export const addNewExamPaperReq = (data: any) => {
 /**
  * 更新试卷信息
  */
-export const updateExamPaperReq = (id: string) => {
-  return http.request("patch", `/exams/${id}`);
+export const updateExamPaperReq = (data: any) => {
+  return http.request("patch", "/exams/", { data });
 };
 
 /**
  * 删除试卷
  */
-export const deleteExamPaper = (data: any) => {
-  return http.request("delete", "/exams/types", { data });
+export const deleteExamPaper = (id: number | string) => {
+  return http.request("delete", `/exams/${id}`);
 };
 
 /**

@@ -7,7 +7,7 @@ export interface ICategory {
 
 export interface ICategoryParams {
   id?: number;
-  name: string;
+  name?: string;
 }
 
 export interface ICategoryPageParams extends ICategoryParams {
@@ -15,14 +15,19 @@ export interface ICategoryPageParams extends ICategoryParams {
   pageSize: number;
 }
 
+/**
+ * 获取全部分类列表
+ */
+export const getExamCategoryAllReq = () => {
+  const params: ICategoryPageParams = {
+    currentPage: 1,
+    pageSize: 9999
+  };
+  return http.request<IPageResult<ICategory>>("get", "/exams/types", { params });
+};
+
 export const getExamCategoryListReq = (params: ICategoryPageParams) => {
-  return http.request<{
-    pageNumber: number;
-    pageSize: number;
-    records: ICategory[];
-    totalPage: number;
-    totalRow: number;
-  }>("get", "/exams/types", { params });
+  return http.request<IPageResult<ICategory>>("get", "/exams/types", { params });
 };
 
 export const addNewCategoryReq = (data: ICategoryParams) => {

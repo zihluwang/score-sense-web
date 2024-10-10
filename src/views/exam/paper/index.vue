@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { Plus, Refresh, Search, Download } from "@element-plus/icons-vue";
-import { computed, onMounted, reactive, ref } from "vue";
-import { useDivisionStore } from "@/store/modules/divisions";
+import { onMounted, reactive, ref } from "vue";
 import { deleteCategoryReq, ICategory } from "@/api/examCategory";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
 import editDialog from "./editDialog.vue";
 import importDialog from "./importDialog.vue";
+import { deleteExamPaper, getExamPaperListReq, IExamPaperListParams } from "@/api/examPaper";
+import useAllExamTypes from "@/hooks/useAllExamTypes";
+import useDivisions from "@/hooks/useDivisions";
 
-const divisionStore = useDivisionStore();
+const { getDivisionList, getProvinceName, getPrefectureName, divisionOptions } = useDivisions();
+const { getAllExamTypes, getExamTypeName } = useAllExamTypes();
 
 defineOptions({
   name: "ExamPaper"
@@ -23,35 +26,45 @@ const paginationConfig = reactive({
   pageSize: 10
 });
 
-/** 请求表格数据 */
-const getList = async () => {
-  // try {
-  //   const reqData: ICategoryPageParams = {
-  //     name: formInline.name || undefined,
-  //     currentPage: paginationConfig.currentPage || 1,
-  //     pageSize: paginationConfig.pageSize || 10
-  //   };
-  //   const res = await getExamCategoryListReq(reqData);
-  //   console.log("获取考试分类成功", res);
-  //   paginationConfig.total = res.totalRow;
-  //   tableData.value = res.records;
-  // } catch (e) {
-  //   console.log("获取考试分类失败", e);
-  //   message("获取考试分类列表失败", { type: "error" });
-  // }
-};
-
 const formInline = reactive({
   name: "",
-  area: ["11", "1101"],
+  area: undefined,
   status: undefined
 });
+
+/** 请求表格数据 */
+const getList = async () => {
+  try {
+    const reqData: IExamPaperListParams = {
+      name: formInline.name || undefined,
+      divisionCode: formInline?.area ? formInline.area[1] : undefined,
+      status: formInline.status || undefined,
+      currentPage: paginationConfig.currentPage || 1,
+      pageSize: paginationConfig.pageSize || 10
+    };
+    const res = await getExamPaperListReq(reqData);
+    console.log("获取试卷列表成功", res);
+    paginationConfig.total = res.totalRow;
+    tableData.value = res.records.map(item => {
+      return {
+        ...item,
+        provinceName: getProvinceName(item.province),
+        prefectureName: getPrefectureName(item.prefecture),
+        typeName: getExamTypeName(item.type)
+      };
+    });
+  } catch (e) {
+    console.log("获取试卷列表失败", e);
+    message("获取试卷列表失败", { type: "error" });
+  }
+};
 
 /** 点击重置 */
 const onReset = () => {
   formInline.name = "";
-  formInline.area = ["11", "1101"];
+  formInline.area = undefined;
   formInline.status = undefined;
+  paginationConfig.currentPage = 1;
   getList();
 };
 
@@ -68,14 +81,14 @@ const handleEditExamTopics = () => {
   console.log("编辑考试题目");
 };
 
-const handleDelete = (id: number) => {
+const handleDelete = (id: number | string) => {
   ElMessageBox.confirm("删除操作不可逆，确认删除？", "注意", {
     confirmButtonText: "确认",
     cancelButtonText: "取消",
     type: "warning"
   }).then(async () => {
     try {
-      await deleteCategoryReq(id);
+      await deleteExamPaper(id);
       message("删除成功", { type: "success" });
       await getList();
     } catch (e) {
@@ -91,12 +104,13 @@ const handleImport = () => {
   importDialogRef.value.open();
 };
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化省市列表
-  const divisionStore = useDivisionStore();
-  divisionStore.getDivisions();
+  await getDivisionList();
+  // 初始化考试类型
+  await getAllExamTypes();
   // 初始化表格
-  getList();
+  await getList();
 });
 </script>
 
@@ -105,12 +119,7 @@ onMounted(() => {
     <el-card class="mb-[24px]" shadow="never">
       <el-form class="mb-[-18px] form-inline" :inline="true" :model="formInline">
         <el-form-item label="省市选择">
-          <el-cascader
-            v-model="formInline.area"
-            :options="divisionStore.divisionOptions"
-            clearable
-            placeholder="请选择省市"
-          />
+          <el-cascader v-model="formInline.area" :options="divisionOptions" clearable placeholder="请选择省市" />
         </el-form-item>
         <el-form-item label="试卷名称">
           <el-input v-model="formInline.name" clearable placeholder="请输入试卷名称" />
@@ -148,10 +157,15 @@ onMounted(() => {
           </template>
         </el-table-column>
         <el-table-column prop="name" label="试卷名称" align="center" />
-        <el-table-column prop="name" label="所属省份" align="center" />
-        <el-table-column prop="name" label="所属城市" align="center" />
-        <el-table-column prop="type" label="所属分类" align="center" />
-        <el-table-column prop="name" label="是否上架" align="center" />
+        <el-table-column prop="provinceName" label="所属省份" align="center" />
+        <el-table-column prop="prefectureName" label="所属城市" align="center" />
+        <el-table-column prop="typeName" label="所属分类" align="center" />
+        <el-table-column label="上下架状态" align="center">
+          <template #default="{ row }">
+            <el-tag v-if="row.status === 1" type="success">已上架</el-tag>
+            <el-tag v-if="row.status === 0" type="info">已下架</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row)">编辑</el-button>
