@@ -140,13 +140,6 @@ onMounted(async () => {
       <div class="mb-[12px]">
         <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增试卷</el-button>
         <el-button type="primary" plain :icon="Download" @click="handleImport">导入试卷</el-button>
-        <el-button :icon="Download" @click="templateTwoRef.click()">下载导入模板2</el-button>
-        <a
-          ref="templateTwoRef"
-          style="width: 0; height: 0"
-          href="/templateFile/岗位上传模版.xlsx"
-          download="岗位上传模版.xlsx"
-        />
       </div>
 
       <el-table :data="tableData" style="width: 100%">
