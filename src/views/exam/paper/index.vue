@@ -6,6 +6,7 @@ import { deleteCategoryReq, ICategory } from "@/api/examCategory";
 import { ElMessageBox } from "element-plus";
 import { message } from "@/utils/message";
 import editDialog from "./editDialog.vue";
+import importDialog from "./importDialog.vue";
 
 const divisionStore = useDivisionStore();
 
@@ -13,7 +14,6 @@ defineOptions({
   name: "ExamPaper"
 });
 
-const templateOneRef = ref(null);
 const templateTwoRef = ref(null);
 const tableData = ref([]);
 
@@ -85,6 +85,12 @@ const handleDelete = (id: number) => {
   });
 };
 
+const importDialogRef = ref(null);
+const handleImport = () => {
+  console.log(importDialogRef.value);
+  importDialogRef.value.open();
+};
+
 onMounted(() => {
   // 初始化省市列表
   const divisionStore = useDivisionStore();
@@ -125,15 +131,8 @@ onMounted(() => {
     <el-card shadow="never">
       <div class="mb-[12px]">
         <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增试卷</el-button>
-        <el-button type="success" plain :icon="Download">导入试卷</el-button>
-        <el-button :icon="Download" @click="templateOneRef.click()">下载导入模板1</el-button>
+        <el-button type="primary" plain :icon="Download" @click="handleImport">导入试卷</el-button>
         <el-button :icon="Download" @click="templateTwoRef.click()">下载导入模板2</el-button>
-        <a
-          ref="templateOneRef"
-          style="width: 0; height: 0"
-          href="/templateFile/客观题答题模版.xlsx"
-          download="客观题答题模版.xlsx"
-        />
         <a
           ref="templateTwoRef"
           style="width: 0; height: 0"
@@ -173,7 +172,8 @@ onMounted(() => {
       />
     </el-card>
 
-    <editDialog :ref="editDialogRef" @update:table-data="getList" />
+    <editDialog ref="editDialogRef" @update:table-data="getList" />
+    <importDialog ref="importDialogRef" @update:table-data="getList" />
   </div>
 </template>
 
