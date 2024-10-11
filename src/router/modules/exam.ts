@@ -16,8 +16,7 @@ export default {
       name: "ExamCategory",
       component: () => import("@/views/exam/category/index.vue"),
       meta: {
-        title: "分类管理",
-        showParent: true
+        title: "分类管理"
       }
     },
     {
@@ -25,8 +24,16 @@ export default {
       name: "ExamPaper",
       component: () => import("@/views/exam/paper/index.vue"),
       meta: {
-        title: "试卷管理",
-        showParent: true
+        title: "试卷管理"
+      }
+    },
+    {
+      path: "/exam/question/:examId",
+      name: "ExamQuestion",
+      component: () => import("@/views/exam/question/index.vue"),
+      meta: {
+        title: "配置试题",
+        showLink: false
       }
     }
   ]

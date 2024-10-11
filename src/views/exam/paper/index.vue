@@ -8,9 +8,11 @@ import importDialog from "./importDialog.vue";
 import { deleteExamPaper, getExamPaperListReq, IExamPaperItem, IExamPaperListParams } from "@/api/examPaper";
 import useAllExamTypes from "@/hooks/useAllExamTypes";
 import useDivisions from "@/hooks/useDivisions";
+import { useRouter } from "vue-router";
 
 const { getDivisionList, getProvinceName, getPrefectureName, divisionOptions } = useDivisions();
 const { getAllExamTypes, getExamTypeName } = useAllExamTypes();
+const router = useRouter();
 
 defineOptions({
   name: "ExamPaper"
@@ -75,8 +77,10 @@ const handleAddAndUpdate = (type: string, row?: IExamPaperItem) => {
   }
 };
 
-const handleEditExamTopics = () => {
+const handleEditExamTopics = (id: number | string) => {
   console.log("编辑考试题目");
+  console.log("考试id:", id);
+  router.push("/exam/question/" + id);
 };
 
 const handleDelete = (id: number | string) => {
@@ -160,7 +164,7 @@ onMounted(async () => {
         <el-table-column fixed="right" label="操作" align="center" width="180px">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleAddAndUpdate('update', row)">编辑</el-button>
-            <el-button link type="primary" @click="handleEditExamTopics">配置试题</el-button>
+            <el-button link type="primary" @click="handleEditExamTopics(row.id)">配置试题</el-button>
             <el-button link type="danger" @click="handleDelete(row.id)">删除</el-button>
           </template>
         </el-table-column>
