@@ -21,14 +21,16 @@ const dialogVisible = ref(false);
 const title = ref("配置试卷");
 
 const id = ref("");
+const row = ref<IJobListItem | null>(null);
 const data = ref<Option[]>([]);
 const value = ref([]);
 
-const open = (row: IJobListItem) => {
+const open = (_row: IJobListItem) => {
   reset();
   dialogVisible.value = true;
-  id.value = row.id;
-  generateData(row.prefecture);
+  id.value = _row.id;
+  row.value = _row;
+  generateData(_row.prefecture, _row.examIds);
 };
 
 const reset = () => {
@@ -44,7 +46,7 @@ const filterMethod = (query, item) => {
   return item.label.toLowerCase().includes(query.toLowerCase());
 };
 
-const generateData = async (divisionCode: string, examId: string[] = []) => {
+const generateData = async (divisionCode: string, examId: string[]) => {
   try {
     // 发请求获取全部试卷
     const reqData: IExamPaperListParams = {
@@ -60,14 +62,15 @@ const generateData = async (divisionCode: string, examId: string[] = []) => {
       // 已配置组最终进入 value
       if (examId.includes(item.id)) {
         value.value.push(item.id);
-      } else {
-        // 未配置组最终进入 data
-        data.value.push({
-          label: item.name,
-          key: item.id
-        });
       }
+      // 不管配置没配置，都要把数据进到data里面
+      data.value.push({
+        label: item.name,
+        key: item.id
+      });
     });
+    console.log("=>(setExamPapersDialog.vue:69) data.value", data.value);
+    console.log("=>(setExamPapersDialog.vue:65) value.value", value.value);
   } catch (e) {
     console.error("获取试卷信息失败", e);
     message("获取试卷信息失败", { type: "error" });
@@ -79,7 +82,10 @@ const submit = async () => {
     // 提交表单
     const reqData: IUpdateJobReqParams = {
       id: id.value,
-      examId: value.value
+      name: row.value.name,
+      province: row.value.province,
+      prefecture: row.value.prefecture,
+      examIds: value.value
     };
     await updateJobReq(reqData);
     message("配置试卷成功", { type: "success" });
@@ -97,17 +103,17 @@ const submit = async () => {
     <el-transfer
       v-model="value"
       :data="data"
-      class="transfer-diy"
       filterable
       :filter-method="filterMethod"
+      class="transfer-diy"
       filter-placeholder="搜索试卷"
       :titles="['可配置试卷', '已配置试卷']"
       :button-texts="['取消', '添加']"
     />
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogVisible = false"> 取消 </el-button>
-        <el-button type="primary" @click="submit"> 确认 </el-button>
+        <el-button @click="dialogVisible = false"> 取消</el-button>
+        <el-button type="primary" @click="submit"> 确认</el-button>
       </div>
     </template>
   </el-dialog>

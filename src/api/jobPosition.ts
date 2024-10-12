@@ -7,6 +7,7 @@ export interface IJobListItem {
   provinceName?: string;
   prefecture: string;
   prefectureName?: string;
+  examIds?: string[];
 }
 
 /**
@@ -44,7 +45,7 @@ export interface IUpdateJobReqParams {
   name?: string;
   province?: string;
   prefecture?: string;
-  examId?: string[];
+  examIds?: string[];
 }
 
 export const updateJobReq = (data: IUpdateJobReqParams) => {
