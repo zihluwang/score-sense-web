@@ -36,11 +36,11 @@ defineExpose({ open });
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" title="预览轮播图" width="50%">
+  <el-dialog v-model="dialogVisible" title="预览轮播图" width="672px">
     <div class="block text-center">
       <el-carousel>
         <el-carousel-item v-for="item in pics" :key="item.id">
-          <el-image style="width: 100%; height: 100%" :src="getAttachmentUrl(item.imageId)" />
+          <el-image style="width: 640px; height: 360px" :src="getAttachmentUrl(item.imageId)" />
         </el-carousel-item>
       </el-carousel>
     </div>
