@@ -63,5 +63,8 @@ export const deleteJobReq = (id: number | string) => {
  * 导入岗位
  */
 export const importNewJobReq = (data: any) => {
-  return http.request("post", "/vacancies/import", { data });
+  const headers = {
+    "Content-Type": "multipart/form-data"
+  };
+  return http.request("post", "/vacancies/import", { headers, data });
 };

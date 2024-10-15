@@ -68,6 +68,9 @@ export const deleteExamPaper = (id: number | string) => {
 /**
  * 提交excel实现试卷导入
  */
-export const importExamPaperReq = (data: any) => {
-  return http.request("post", "/exams/import", { data });
+export const importExamPaperReq = (data: FormData) => {
+  const headers = {
+    "Content-Type": "multipart/form-data"
+  };
+  return http.request("post", "/exams/import", { headers, data });
 };

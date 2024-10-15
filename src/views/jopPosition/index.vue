@@ -131,7 +131,7 @@ onMounted(async () => {
     <el-card shadow="never">
       <div class="mb-[12px]">
         <el-button type="primary" :icon="Plus" @click="handleAddAndUpdate('add')">新增岗位</el-button>
-        <el-button type="primary" plain :icon="Download" @click="handleImport">导入试卷</el-button>
+        <el-button type="primary" plain :icon="Download" @click="handleImport">导入岗位</el-button>
       </div>
 
       <el-table :data="tableData" style="width: 100%">

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { FormInstance, FormRules } from "element-plus";
-import { addNewCategoryReq, updateCategoryReq } from "@/api/examCategory";
+import { genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import { message } from "@/utils/message";
-import { Download, UploadFilled } from "@element-plus/icons-vue";
+import { Download, Upload } from "@element-plus/icons-vue";
+import { importNewJobReq } from "@/api/jobPosition";
 
 defineOptions({
   name: "importDialog"
@@ -17,14 +18,7 @@ const dialogVisible = ref(false);
 const title = ref("导入试卷");
 
 const form = reactive({
-  id: 0,
-  name: "",
-  area: ["11", "1101"],
-  status: 0
-});
-
-const rules = reactive<FormRules<{ name: string }>>({
-  name: [{ required: true, message: "请输入分类名称", trigger: "blur" }]
+  fileList: []
 });
 
 const open = () => {
@@ -33,37 +27,41 @@ const open = () => {
 };
 
 const reset = () => {
-  form.id = 0;
-  form.name = "";
-  form.area = ["11", "1101"];
-  form.status = 0;
+  form.fileList = [];
 };
 
 defineExpose({ open });
 
-const formRef = ref(null);
-const submit = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  await formEl.validate(async (valid, fields) => {
-    if (valid) {
-      try {
-        const reqData = {
-          id: form.id,
-          name: form.name
-        };
-        await updateCategoryReq(reqData);
-        message("编辑成功", { type: "success" });
-        dialogVisible.value = false;
-        emit("update:tableData");
-      } catch (error) {
-        console.log("操作失败失败", error);
-        message("操作失败失败", { type: "error" });
-      }
-    }
-  });
+const submit = async () => {
+  // 判断下 el-upload 是否选择了文件
+  if (form.fileList.length === 0) {
+    message("请选择文件", { type: "error" });
+    return;
+  }
+  // 如果选择了就可以发请求了
+  const formData = new FormData();
+  formData.append("attachment", form.fileList[0].raw);
+
+  try {
+    await importNewJobReq(formData);
+    message("导入岗位成功", { type: "success" });
+    emit("update:tableData");
+  } catch (e) {
+    console.error("导入岗位失败", e);
+    message("导入岗位失败", { type: "error" });
+  }
 };
 
 const templateTwoRef = ref(null);
+
+const upload = ref<UploadInstance>();
+
+const handleExceed: UploadProps["onExceed"] = files => {
+  upload.value!.clearFiles();
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  upload.value!.handleStart(file);
+};
 </script>
 
 <template>
@@ -79,23 +77,31 @@ const templateTwoRef = ref(null);
       download="岗位上传模版.xlsx"
     />
 
-    <div style="margin-bottom: 10px">2. 点击下方区域选择编辑完成的模板文件或者将上述文件拖拽至此区域</div>
+    <div style="margin-bottom: 10px">2. 点击下方按钮选择需要导入的文件</div>
 
-    <div style="margin-bottom: 10px">3. 点击右下角确认按钮开始试卷导入工作</div>
+    <el-upload
+      ref="upload"
+      v-model:file-list="form.fileList"
+      class="upload-demo"
+      action=""
+      :limit="1"
+      :on-exceed="handleExceed"
+      :auto-upload="false"
+    >
+      <template #trigger>
+        <el-button :icon="Upload" type="primary" plain>选择文件</el-button>
+      </template>
+      <template #tip>
+        <div class="el-upload__tip" style="color: red">仅支持一个文件，选择新的文件会将旧的文件覆盖掉</div>
+      </template>
+    </el-upload>
 
-    <el-form ref="formRef" :rules="rules" :model="form" label-width="auto" style="width: 100%">
-      <el-form-item label="">
-        <el-upload :show-file-list="false" drag action="" :limit="1" style="width: 100%">
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="el-upload__text">拖拽文件至此或者<em>点击上传文件</em></div>
-        </el-upload>
-      </el-form-item>
-    </el-form>
+    <div style="margin-bottom: 10px">3. 点击右下角确认按钮开始岗位导入工作</div>
 
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false"> 取消 </el-button>
-        <el-button type="primary" @click="submit(formRef)"> 确认 </el-button>
+        <el-button type="primary" @click="submit()"> 确认 </el-button>
       </div>
     </template>
   </el-dialog>
