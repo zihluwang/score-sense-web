@@ -1,51 +1,24 @@
-<h1>vue-pure-admin精简版（非国际化版本）</h1>
+## score-sense-web
 
-[![license](https://img.shields.io/github/license/pure-admin/vue-pure-admin.svg)](LICENSE)
+### 还未完成功能
 
-**中文** | [English](./README.en-US.md)
+- 岗位excel导入，代码已写部分。接口已封装。
+- 试卷excel导入，代码已写部分。接口已封装。
+- 试题配置管理，只实现了路由部分的配置和页面文件的创建
 
-## 介绍
+### 代码分层
 
-精简版是基于 [vue-pure-admin](https://github.com/pure-admin/vue-pure-admin) 提炼出的架子，包含主体功能，更适合实际项目开发，打包后的大小在全局引入 [element-plus](https://element-plus.org) 的情况下仍然低于 `2.3MB`，并且会永久同步完整版的代码。开启 `brotli` 压缩和 `cdn` 替换本地库模式后，打包大小低于 `350kb`
-
-## 版本选择
-
-当前是非国际化版本，如果您需要国际化版本 [请点击](https://github.com/pure-admin/pure-admin-thin/tree/i18n)
-
-## `js` 版本
-
-[点我查看 js 版本](https://pure-admin.github.io/pure-admin-doc/pages/js/)
-
-## `max` 版本
-
-[点我查看 max 版本](https://github.com/pure-admin/vue-pure-admin-max)
-
-## 配套视频
-
-[点我查看 UI 设计](https://www.bilibili.com/video/BV17g411T7rq)  
-[点我查看快速开发教程](https://www.bilibili.com/video/BV1kg411v7QT)
-
-## 配套保姆级文档
-
-[点我查看 vue-pure-admin 文档](https://pure-admin.github.io/pure-admin-doc)  
-[点我查看 @pureadmin/utils 文档](https://pure-admin-utils.netlify.app)
-
-## 优质服务、软件外包、赞助支持
-
-[点我查看详情](https://pure-admin.github.io/pure-admin-doc/pages/service/)
-
-## 预览
-
-[查看预览](https://pure-admin-thin.netlify.app/#/login)
-
-## 维护者
-
-[xiaoxian521](https://github.com/xiaoxian521)
-
-## ⚠️ 注意
-
-精简版不接受任何 `issues` 和 `pr`，如果有问题请到完整版 [issues](https://github.com/pure-admin/vue-pure-admin/issues/new/choose) 去提，谢谢！
-
-## 许可证
-
-[MIT © 2020-present, pure-admin](./LICENSE)
+- public/templeFile 里面存放了 excel 的模板，用于下载
+- hooks 里面有两个自定义 hooks，一个用于获取所有的考试分类，另一个用于获取省市数据
+- views 文件夹下面的 swiper 是轮播图管理
+- views 文件夹下面的 exam 是考试管理
+  - category 是考试分类管理
+  - paper 是考试试卷管理
+  - question 是试题配置管理
+- views 文件夹下面的 jobPosition 是岗位管理.
+  - setExamPaperDialog 是将岗位和试卷关联用的弹窗
+- index.vue 是列表页
+- editDialog 是编辑和新增弹窗
+- importDialog 是导入用的弹窗
+- login 是登录页面代码
+- api 文件夹里面都是接口封装，每个页面的接口都在对应的ts里面
